@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skyfall — Campus Explorer</title>
+    <meta name="description" content="Skyfall campus explorer: visit blocks, scan QR codes, and complete missions!" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- PWA Requirements -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#38bdf8">
+    <link rel="apple-touch-icon" href="favicon.ico">
+
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+    <!-- QR Code generator (for admin printable QRs) -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <!-- jsQR (for camera QR scanning) -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <link rel="stylesheet" href="style.css?v=3" />
+</head>
+
+<body>
+
+    <!-- SKY BACKGROUND -->
+    <div class="sky-bg">
+        <div class="sun"></div>
+        <div class="sun-glow"></div>
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+        <div class="cloud cloud-4"></div>
+        <div class="horizon-glow"></div>
+        <div class="stars" id="stars"></div>
+    </div>
+
+    <!-- =========== ONBOARDING =========== -->
+    <div class="screen" id="screen-onboard">
+        <div class="onboard-container">
+            <div class="logo-wrap">
+                <h1 class="logo-title">SKYFALL</h1>
+                <p class="logo-sub">Campus Explorer</p>
+            </div>
+            <div class="onboard-card">
+                <h2>Begin Your Journey</h2>
+                <p>Head to each campus block, scan the QR code, and unlock your mission!</p>
+                <div class="input-group">
+                    <label for="player-email">Email</label>
+                    <input type="email" id="player-email" placeholder="student@campus.edu" autocomplete="email" />
+                </div>
+                <div class="input-group">
+                    <label for="player-password">Password</label>
+                    <input type="password" id="player-password" placeholder="••••••••" />
+                </div>
+                <button class="btn-primary" id="btn-start">Login / Register ✦</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========== MAIN APP SHELL =========== -->
+    <div class="app-shell hidden" id="app-shell">
+
+        <!-- TOP HUD -->
+        <header class="hud-top">
+            <div class="hud-player">
+                <div class="avatar-ring">
+                    <div class="avatar" id="hud-avatar">🧑</div>
+                </div>
+                <div class="hud-info">
+                    <span class="hud-name" id="hud-name">Explorer</span>
+                    <div class="xp-bar-wrap">
+                        <div class="xp-bar" id="xp-bar"></div>
+                    </div>
+                    <span class="xp-label" id="xp-label">0 XP</span>
+                </div>
+            </div>
+            <div class="hud-right">
+                <div class="badge-count" id="badge-count">0/8</div>
+                <span class="badge-label">Blocks</span>
+            </div>
+        </header>
+
+        <!-- SCREEN: MAP -->
+        <div class="screen-inner" id="screen-map">
+            <div class="map-title-bar">
+                <span class="map-label">🗺️ Campus Map</span>
+                <button class="btn-icon" id="btn-admin-open" title="Admin">⚙️</button>
+            </div>
+            <p class="map-hint">Tap a block to see your mission, then scan its QR code on-site to unlock it.</p>
+            <div class="campus-map" id="campus-map"></div>
+            <div class="map-legend">
+                <span class="legend-item"><span class="dot dot-unvisited"></span>Locked</span>
+                <span class="legend-item"><span class="dot dot-visited"></span>Unlocked</span>
+                <span class="legend-item"><span class="dot dot-done"></span>Completed</span>
+            </div>
+        </div>
+
+        <!-- SCREEN: PROGRESS -->
+        <div class="screen-inner hidden" id="screen-progress">
+            <div class="progress-header">
+                <h2>Your Progress</h2>
+                <div class="trophy-row" id="trophy-row"></div>
+            </div>
+            <div class="progress-grid" id="progress-grid"></div>
+            <div class="total-xp-card">
+                <div class="total-xp-label">Total XP Earned</div>
+                <div class="total-xp-value" id="total-xp-display">0</div>
+                <div class="xp-full-bar">
+                    <div class="xp-full-fill" id="xp-full-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM NAV -->
+        <nav class="bottom-nav">
+            <button class="nav-btn active" id="nav-map" data-screen="map">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-label">Map</span>
+            </button>
+            <div class="nav-center-btn" id="nav-scan">
+                <span class="scan-icon-text">📷</span>
+            </div>
+            <button class="nav-btn" id="nav-progress" data-screen="progress">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Progress</span>
+            </button>
+        </nav>
+
+    </div>
+
+    <!-- =========== BLOCK DETAIL PANEL =========== -->
+    <div class="overlay hidden" id="block-overlay"></div>
+    <div class="block-panel hidden" id="block-panel">
+        <div class="panel-drag-handle"></div>
+        <div class="panel-header">
+            <div class="panel-block-icon" id="panel-icon">🏫</div>
+            <div>
+                <h2 class="panel-block-name" id="panel-name">Block A</h2>
+                <span class="panel-status-badge" id="panel-badge">Locked</span>
+            </div>
+            <button class="btn-close" id="btn-panel-close">✕</button>
+        </div>
+        <div class="panel-body">
+
+            <!-- LOCKED state: prompt to scan -->
+            <div id="state-locked">
+                <div class="locked-hint">
+                    <div class="lock-icon">🔒</div>
+                    <p>Head to <strong id="locked-block-name">this block</strong> on campus and scan its QR code to
+                        unlock your mission!</p>
+                </div>
+                <button class="btn-scan-qr" id="btn-open-scanner">📷 Scan QR Code</button>
+            </div>
+
+            <!-- UNLOCKED state: show task, prompt to complete -->
+            <div id="state-unlocked" class="hidden">
+                <div class="task-box">
+                    <div class="task-box-label">🎯 Mission</div>
+                    <div class="task-text" id="panel-task">—</div>
+                </div>
+                <div class="panel-stats">
+                    <div class="stat-item">
+                        <span class="stat-val" id="panel-xp-reward">+50 XP</span>
+                        <span class="stat-key">Reward</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-val" id="panel-unlock-time">—</span>
+                        <span class="stat-key">Unlocked At</span>
+                    </div>
+                </div>
+                <button class="btn-complete" id="btn-complete">✅ Mark Mission Complete</button>
+            </div>
+
+            <!-- COMPLETED state -->
+            <div id="state-completed" class="hidden">
+                <div class="task-box">
+                    <div class="task-box-label">🎯 Mission (Completed)</div>
+                    <div class="task-text" id="panel-task-done">—</div>
+                </div>
+                <div class="completed-banner">
+                    🎉 Mission Accomplished! You earned XP for this block.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =========== QR SCANNER MODAL =========== -->
+    <div class="overlay hidden" id="scanner-overlay"></div>
+    <div class="scanner-modal hidden" id="scanner-modal">
+        <div class="scanner-header">
+            <span>📷 Scan Block QR Code</span>
+            <button class="btn-close" id="btn-scanner-close">✕</button>
+        </div>
+        <div class="scanner-body">
+            <div class="video-wrap">
+                <video id="qr-video" playsinline autoplay muted></video>
+                <canvas id="qr-canvas" style="display:none"></canvas>
+                <div class="scanner-frame">
+                    <div class="corner tl"></div>
+                    <div class="corner tr"></div>
+                    <div class="corner bl"></div>
+                    <div class="corner br"></div>
+                    <div class="scan-line"></div>
+                </div>
+            </div>
+            <p class="scanner-hint" id="scanner-hint">Point your camera at the QR code on the block board</p>
+            <div class="scan-result hidden" id="scan-result">
+                <span id="scan-result-text"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========== ADMIN PANEL =========== -->
+    <div class="overlay hidden" id="admin-overlay"></div>
+    <div class="admin-panel hidden" id="admin-panel">
+        <div class="admin-header">
+            <span>⚙️ Admin Panel</span>
+            <button class="btn-close" id="btn-admin-close">✕</button>
+        </div>
+        <div class="admin-body" id="admin-body">
+
+            <!-- Login -->
+            <div class="admin-login" id="admin-login">
+                <p>Enter admin password to manage tasks &amp; QR codes</p>
+                <input type="password" id="admin-pass" placeholder="Password" />
+                <button class="btn-primary" id="btn-admin-login">Login</button>
+                <span class="admin-error hidden" id="admin-error">Incorrect password</span>
+            </div>
+
+            <!-- Tasks + QR codes -->
+            <div class="admin-tasks hidden" id="admin-tasks">
+                <div class="admin-tabs">
+                    <button class="admin-tab active" id="tab-tasks-btn">Tasks</button>
+                    <button class="admin-tab" id="tab-qr-btn">QR Codes</button>
+                </div>
+
+                <!-- Tasks tab -->
+                <div id="tab-tasks">
+                    <div class="admin-reset-row">
+                        <button class="btn-danger" id="btn-reset-all">🔄 Reset All Progress</button>
+                    </div>
+                    <div id="admin-task-list"></div>
+                    <button class="btn-primary" id="btn-save-tasks">💾 Save All Tasks</button>
+                </div>
+
+                <!-- QR tab -->
+                <div id="tab-qr" class="hidden">
+                    <p class="qr-tab-hint">Print these QR codes and place them at each block. Students scan them on-site
+                        to unlock their mission.</p>
+                    <div id="qr-codes-grid"></div>
+                    <button class="btn-primary" id="btn-print-qr">🖨️ Print All QR Codes</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =========== TOAST =========== -->
+    <div class="xp-toast hidden" id="xp-toast">+50 XP</div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(reg => {
+                    reg.update(); // Force Sw update
+                });
+            });
+            // Force clean all old caches immediately to fix reversion
+            caches.keys().then(keys => {
+                keys.forEach(key => caches.delete(key));
+            });
+        }
+    </script>
+    <script src="app.js?v=2"></script>
+</body>
+
+</html>
