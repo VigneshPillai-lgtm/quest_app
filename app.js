@@ -666,7 +666,7 @@ document.getElementById('btn-start').addEventListener('click', async () => {
         }
     } catch (err) {
         console.error(err);
-        alert('Could not connect to database server. Ensure it is running on PORT 3000.');
+        alert('⏳ Server is waking up (free tier). Please wait 30 seconds and try again!');
     } finally {
         btn.textContent = origText;
         btn.disabled = false;
@@ -692,6 +692,11 @@ function init() {
     console.log('[DEBUG] App initialized');
     createStars();
     loadState();
+
+    // Pre-warm the Render backend so it's ready when user logs in
+    fetch(`${API_BASE}/api/ping`).catch(() => {
+        // Silently warm up — ignore errors
+    });
 
     if (state.playerEmail) {
         console.log('[DEBUG] Skipping onboarding for:', state.playerEmail);

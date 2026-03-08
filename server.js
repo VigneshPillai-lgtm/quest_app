@@ -83,6 +83,9 @@ app.post('/api/login', (req, res) => {
     });
 });
 
+// Ping / health check (used to pre-warm the Render free instance)
+app.get('/api/ping', (req, res) => res.json({ status: 'ok' }));
+
 // Sync Progress Endpoint
 app.post('/api/sync', (req, res) => {
     const { email, xp, venues } = req.body;
