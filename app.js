@@ -33,10 +33,10 @@ let state = {
 // ==========================================
 // API BASE URL
 // ==========================================
-// Calculate backend URL dynamically (same host, port 3000)
-const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+// Calculate backend URL — use live Render in production, localhost for development
+const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
     ? 'http://localhost:3000'
-    : `http://${window.location.hostname}:3000`;
+    : 'https://skyfall-backend.onrender.com';
 
 function loadState() {
     // Make sure all venues exist in state
