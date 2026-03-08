@@ -9,9 +9,9 @@
 // CAMPUS BLOCKS CONFIG
 // ==========================================
 const BLOCKS = [
-    { id: 'A', name: 'Admin venue', icon: '🏛️', xpReward: 50 },
-    { id: 'B', name: 'Humanities venue', icon: '📚', xpReward: 50 },
-    { id: 'C', name: 'Main venue', icon: '🏫', xpReward: 50 },
+    { id: 'A', name: 'Admin block', icon: '🏛️', xpReward: 50 },
+    { id: 'B', name: 'Humanities block', icon: '📚', xpReward: 50 },
+    { id: 'C', name: 'Main block', icon: '🏫', xpReward: 50 },
     { id: 'D', name: 'Green park', icon: '🌳', xpReward: 50 },
     { id: 'E', name: 'Chavra Square', icon: '⛲', xpReward: 50 },
 ];
@@ -681,11 +681,25 @@ document.getElementById('player-password').addEventListener('keydown', (e) => {
 // APP INIT
 // ==========================================
 function startApp() {
-    document.getElementById('screen-onboard').classList.add('hidden');
-    document.getElementById('app-shell').classList.remove('hidden');
-    document.body.classList.add('app-launched');
-    updateHUD();
-    renderMap();
+    const onboard = document.getElementById('screen-onboard');
+    const shell = document.getElementById('app-shell');
+
+    // Start fly-up animation on the onboarding screen
+    onboard.classList.add('fly-up');
+
+    // After 550ms (mid-animation), reveal dashboard rising from below
+    setTimeout(() => {
+        shell.classList.remove('hidden');
+        shell.classList.add('launch-rise');
+        document.body.classList.add('app-launched');
+        updateHUD();
+        renderMap();
+    }, 550);
+
+    // After full animation, fully hide onboarding
+    setTimeout(() => {
+        onboard.classList.add('hidden');
+    }, 950);
 }
 
 function init() {
