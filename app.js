@@ -300,128 +300,129 @@ document.getElementById('btn-panel-close')?.addEventListener('click', closeBlock
 document.getElementById('venue-overlay')?.addEventListener('click', closeBlockPanel);
 
 // ==========================================
-// SCAN BUTTON (center nav) & QR LOGIC
+// INLINE SCANNER LOGIC
 // ==========================================
 let scanning = false;
 let scanTimer = null;
 const video = document.getElementById('qr-video');
 const canvasElement = document.getElementById('qr-canvas');
 const canvas = canvasElement.getContext('2d');
-const scannerModal = document.getElementById('scanner-modal');
-const scannerOverlay = document.getElementById('scanner-overlay');
 const scanResultText = document.getElementById('scan-result-text');
 const scanResultContainer = document.getElementById('scan-result');
 
 function startScanner() {
-    scannerOverlay.classList.remove('hidden');
-    scannerModal.classList.remove('hidden');
-    scanResultContainer.classList.add('hidden');
-    document.getElementById('scanner-hint').textContent = 'Point your camera at the QR code on the venue board';
+    const btn = document.getElementById('btn-start-scan');
+    const hint = document.getElementById('scanner-main-hint');
 
-    // Request camera
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function (stream) {
-        scanning = true;
-        video.srcObject = stream;
-        video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
-        video.play();
-        requestAnimationFrame(tick);
-    }).catch(function (err) {
-        console.error("Camera error:", err);
-        document.getElementById('scanner-hint').textContent = 'Unable to access camera. Please allow permissions.';
-    });
+    if (scanning) return; // already running
+
+    hint.textContent = 'Starting camera…';
+    if (btn) btn.classList.add('hidden');
+
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        .then(function (stream) {
+            scanning = true;
+            video.srcObject = stream;
+            video.setAttribute('playsinline', true);
+            video.play();
+            hint.textContent = 'Point at a venue QR code to unlock your mission!';
+            requestAnimationFrame(tick);
+        })
+        .catch(function (err) {
+            console.error('Camera error:', err);
+            hint.textContent = '⚠️ Camera access denied. Please allow camera in your browser settings.';
+            if (btn) { btn.classList.remove('hidden'); btn.textContent = '📷 Try Again'; }
+        });
 }
 
 function stopScanner() {
     scanning = false;
     if (video.srcObject) {
-        video.srcObject.getTracks().forEach(track => track.stop());
+        video.srcObject.getTracks().forEach(t => t.stop());
+        video.srcObject = null;
     }
-    scannerOverlay.classList.add('hidden');
-    scannerModal.classList.add('hidden');
 }
 
 function tick() {
     if (!scanning) return;
-
     if (video.readyState === video.HAVE_ENOUGH_DATA) {
         canvasElement.height = video.videoHeight;
         canvasElement.width = video.videoWidth;
         canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
-
         const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
-        const code = jsQR(imageData.data, imageData.width, imageData.height, {
-            inversionAttempts: "dontInvert",
-        });
-
+        const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
         if (code) {
             handleScanSuccess(code.data);
-            return; // pause scanning
+            return;
         }
     }
-    // Throttle scanning to ~4 frames per second to save battery
     scanTimer = setTimeout(() => requestAnimationFrame(tick), 250);
 }
 
 function handleScanSuccess(data) {
-    // Expected format: "SKYFALL_BLOCK_A"
     if (data.startsWith('SKYFALL_BLOCK_')) {
         const venueId = data.replace('SKYFALL_BLOCK_', '');
         const venue = BLOCKS.find(b => b.id === venueId);
-
         if (venue) {
-            scanning = false; // pause to show result
-            scanResultText.textContent = `Found: ${venue.name}!`;
+            scanning = false;
+            scanResultText.textContent = `✅ Found: ${venue.name}!`;
             scanResultContainer.classList.remove('hidden');
 
-            // Mark as visited automatically if not already
             if (!state.venues[venueId].visited) {
                 state.venues[venueId].visited = true;
                 saveState();
                 updateHUD();
-                renderMap();
                 showToast(`📍 Checked into ${venue.name}!`);
             }
 
-            // Wait 1.5s then close scanner and open venue panel
             setTimeout(() => {
-                stopScanner();
+                scanResultContainer.classList.add('hidden');
                 openBlockPanel(venueId);
+                // Resume scanning after panel closes
             }, 1500);
             return;
         }
     }
-
-    // If we drop down here, it wasn't a valid venue QR code
-    scanResultText.textContent = "Invalid QR Code format.";
+    scanResultText.textContent = '❌ Invalid QR Code. Try another.';
     scanResultContainer.classList.remove('hidden');
     setTimeout(() => {
         scanResultContainer.classList.add('hidden');
-        if (scanning) requestAnimationFrame(tick); // resume
+        if (scanning) requestAnimationFrame(tick);
     }, 2000);
 }
 
-document.getElementById('nav-scan').addEventListener('click', startScanner);
-document.getElementById('btn-open-scanner')?.addEventListener('click', () => {
+// Start scan button
+document.getElementById('btn-start-scan')?.addEventListener('click', startScanner);
+
+// Also resume scanning when venue panel closes
+document.getElementById('btn-panel-close')?.addEventListener('click', () => {
     closeBlockPanel();
-    startScanner();
+    setTimeout(() => { scanning = true; requestAnimationFrame(tick); }, 300);
 });
-document.getElementById('btn-scanner-close').addEventListener('click', stopScanner);
-document.getElementById('scanner-overlay').addEventListener('click', stopScanner);
+document.getElementById('venue-overlay')?.addEventListener('click', () => {
+    closeBlockPanel();
+    setTimeout(() => { scanning = true; requestAnimationFrame(tick); }, 300);
+});
 
 // ==========================================
 // SCREEN NAVIGATION
 // ==========================================
 function switchScreen(name) {
-    document.getElementById('screen-map').classList.toggle('hidden', name !== 'map');
+    document.getElementById('screen-scan').classList.toggle('hidden', name !== 'scan');
     document.getElementById('screen-progress').classList.toggle('hidden', name !== 'progress');
 
-    document.getElementById('nav-map').classList.toggle('active', name === 'map');
+    document.getElementById('nav-scan-tab').classList.toggle('active', name === 'scan');
     document.getElementById('nav-progress').classList.toggle('active', name === 'progress');
 
+    if (name === 'scan') {
+        if (!scanning) startScanner();
+    } else {
+        stopScanner();
+    }
     if (name === 'progress') renderProgress();
 }
 
-document.getElementById('nav-map').addEventListener('click', () => switchScreen('map'));
+document.getElementById('nav-scan-tab').addEventListener('click', () => switchScreen('scan'));
 document.getElementById('nav-progress').addEventListener('click', () => switchScreen('progress'));
 
 // ==========================================
@@ -684,21 +685,20 @@ function startApp() {
     const onboard = document.getElementById('screen-onboard');
     const shell = document.getElementById('app-shell');
 
-    // Start fly-up animation on the onboarding screen
     onboard.classList.add('fly-up');
 
-    // After 550ms (mid-animation), reveal dashboard rising from below
     setTimeout(() => {
         shell.classList.remove('hidden');
         shell.classList.add('launch-rise');
         document.body.classList.add('app-launched');
         updateHUD();
-        renderMap();
+        renderProgress(); // pre-render progress data
     }, 550);
 
-    // After full animation, fully hide onboarding
     setTimeout(() => {
         onboard.classList.add('hidden');
+        // Auto-start scanner after animation
+        startScanner();
     }, 950);
 }
 

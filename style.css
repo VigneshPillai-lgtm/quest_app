@@ -1517,3 +1517,157 @@ body {
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* ==========================================
+   INLINE SCANNER SCREEN
+   ========================================== */
+#screen-scan {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.scanner-main-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  padding: 16px 16px 0;
+  gap: 10px;
+}
+
+.scanner-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.scanner-title span {
+  font-size: 26px;
+}
+
+.scanner-main-hint {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-align: center;
+  max-width: 300px;
+}
+
+.scanner-main-video-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  flex: 1;
+  min-height: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 8px 32px rgba(91, 163, 211, 0.25);
+}
+
+#qr-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* scanner corners frame */
+.scanner-frame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.corner {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-color: #5ba3d3;
+  border-style: solid;
+}
+
+.corner.tl {
+  top: 12px;
+  left: 12px;
+  border-width: 3px 0 0 3px;
+  border-radius: 4px 0 0 0;
+}
+
+.corner.tr {
+  top: 12px;
+  right: 12px;
+  border-width: 3px 3px 0 0;
+  border-radius: 0 4px 0 0;
+}
+
+.corner.bl {
+  bottom: 12px;
+  left: 12px;
+  border-width: 0 0 3px 3px;
+  border-radius: 0 0 0 4px;
+}
+
+.corner.br {
+  bottom: 12px;
+  right: 12px;
+  border-width: 0 3px 3px 0;
+  border-radius: 0 0 4px 0;
+}
+
+.scan-line {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #5ba3d3, #7dd3fc, #5ba3d3, transparent);
+  animation: scanBounce 2s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(91, 163, 211, 0.8);
+}
+
+@keyframes scanBounce {
+  0% {
+    top: 15%;
+  }
+
+  50% {
+    top: 80%;
+  }
+
+  100% {
+    top: 15%;
+  }
+}
+
+.scan-result {
+  background: rgba(91, 163, 211, 0.15);
+  border: 1px solid #5ba3d3;
+  border-radius: var(--radius-sm);
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  width: 100%;
+  max-width: 360px;
+  animation: fadeUp 0.3s ease;
+}
+
+.btn-start-scan {
+  width: 100%;
+  max-width: 360px;
+  margin-bottom: 12px;
+}
+
+/* Two-tab bottom nav */
+.bottom-nav {
+  justify-content: space-around;
+}
+
+.bottom-nav .nav-btn {
+  flex: 1;
+}
