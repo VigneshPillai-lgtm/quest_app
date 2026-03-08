@@ -346,17 +346,19 @@ function stopScanner() {
 function tick() {
     if (!scanning) return;
     if (video.readyState === video.HAVE_ENOUGH_DATA) {
-        canvasElement.height = video.videoHeight;
-        canvasElement.width = video.videoWidth;
-        canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
-        const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
-        const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'dontInvert' });
-        if (code) {
-            handleScanSuccess(code.data);
-            return;
+        if (video.videoWidth > 0 && video.videoHeight > 0) {
+            canvasElement.height = video.videoHeight;
+            canvasElement.width = video.videoWidth;
+            canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height);
+            const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height);
+            const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts: 'attemptBoth' });
+            if (code) {
+                handleScanSuccess(code.data);
+                return;
+            }
         }
     }
-    scanTimer = setTimeout(() => requestAnimationFrame(tick), 250);
+    scanTimer = requestAnimationFrame(tick);
 }
 
 function handleScanSuccess(data) {
@@ -485,21 +487,91 @@ function renderAdminTasks() {
     });
 }
 
-// Setup Tabs
 document.getElementById('tab-tasks-btn').addEventListener('click', () => {
     document.getElementById('tab-tasks-btn').classList.add('active');
     document.getElementById('tab-qr-btn').classList.remove('active');
+    document.getElementById('tab-users-btn').classList.remove('active');
     document.getElementById('tab-tasks').classList.remove('hidden');
     document.getElementById('tab-qr').classList.add('hidden');
+    document.getElementById('tab-users').classList.add('hidden');
 });
 
 document.getElementById('tab-qr-btn').addEventListener('click', () => {
     document.getElementById('tab-qr-btn').classList.add('active');
     document.getElementById('tab-tasks-btn').classList.remove('active');
+    document.getElementById('tab-users-btn').classList.remove('active');
     document.getElementById('tab-qr').classList.remove('hidden');
     document.getElementById('tab-tasks').classList.add('hidden');
+    document.getElementById('tab-users').classList.add('hidden');
     renderQRCodes();
 });
+
+document.getElementById('tab-users-btn').addEventListener('click', () => {
+    document.getElementById('tab-users-btn').classList.add('active');
+    document.getElementById('tab-tasks-btn').classList.remove('active');
+    document.getElementById('tab-qr-btn').classList.remove('active');
+    document.getElementById('tab-users').classList.remove('hidden');
+    document.getElementById('tab-tasks').classList.add('hidden');
+    document.getElementById('tab-qr').classList.add('hidden');
+    fetchAdminUsers();
+});
+
+document.getElementById('btn-refresh-users').addEventListener('click', fetchAdminUsers);
+
+async function fetchAdminUsers() {
+    const list = document.getElementById('admin-users-list');
+    list.innerHTML = '<div class="admin-user-loading">Loading players...</div>';
+
+    try {
+        const res = await fetch(`${API_BASE}/api/admin/users?pwd=${ADMIN_PASSWORD}`);
+        const data = await res.json();
+
+        if (res.ok && data.users) {
+            renderAdminUsers(data.users);
+        } else {
+            list.innerHTML = `<div class="admin-user-loading">Failed to load: ${(data && data.error) || 'Unknown error'}</div>`;
+        }
+    } catch (err) {
+        list.innerHTML = '<div class="admin-user-loading">Network error loading players.</div>';
+    }
+}
+
+function renderAdminUsers(users) {
+    const list = document.getElementById('admin-users-list');
+    list.innerHTML = '';
+
+    if (users.length === 0) {
+        list.innerHTML = '<div class="admin-user-loading">No players found yet.</div>';
+        return;
+    }
+
+    users.forEach(user => {
+        const item = document.createElement('div');
+        item.className = 'admin-user-item';
+
+        // Map venue IDs to nice names/icons if they have completed venues
+        let venueHtml = '';
+        if (user.venues && user.venues.length > 0) {
+            venueHtml = '<div class="admin-user-venues">';
+            user.venues.forEach(vid => {
+                const b = BLOCKS.find(block => block.id === vid);
+                if (b) venueHtml += `<span class="admin-venue-badge">${b.icon} ${b.name}</span>`;
+            });
+            venueHtml += '</div>';
+        } else {
+            venueHtml = '<div class="admin-user-progress">No venues completed</div>';
+        }
+
+        item.innerHTML = `
+            <div class="admin-user-top">
+                <span class="admin-user-email">${user.email}</span>
+                <span class="admin-user-xp">${user.xp} XP</span>
+            </div>
+            ${venueHtml}
+        `;
+        list.appendChild(item);
+    });
+}
 
 function renderQRCodes() {
     const grid = document.getElementById('qr-codes-grid');

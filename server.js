@@ -112,6 +112,36 @@ app.post('/api/sync', (req, res) => {
     res.json({ success: true });
 });
 
+// Admin endpoint to get all users and their progress
+app.get('/api/admin/users', (req, res) => {
+    // In a real app we'd authenticate the admin token here
+    const { pwd } = req.query;
+    if (pwd !== 'skyfall') {
+        return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    db.all('SELECT email, xp, isAdmin FROM users WHERE isAdmin = 0 ORDER BY xp DESC', [], (err, users) => {
+        if (err) return res.status(500).json({ error: 'Database error' });
+
+        db.all('SELECT email, venue_id, completed FROM user_venues WHERE completed = 1', [], (err, venues) => {
+            if (err) return res.status(500).json({ error: 'Database error' });
+
+            // Map venues to users
+            const usersWithVenues = users.map(user => {
+                const userVenues = venues.filter(v => v.email === user.email);
+                return {
+                    email: user.email,
+                    xp: user.xp,
+                    completedCount: userVenues.length,
+                    venues: userVenues.map(v => v.venue_id)
+                };
+            });
+
+            res.json({ success: true, users: usersWithVenues });
+        });
+    });
+});
+
 // Start Server
 const PORT = 3000;
 app.listen(PORT, () => {

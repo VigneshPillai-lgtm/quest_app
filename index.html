@@ -222,6 +222,7 @@
                 <div class="admin-tabs">
                     <button class="admin-tab active" id="tab-tasks-btn">Tasks</button>
                     <button class="admin-tab" id="tab-qr-btn">QR Codes</button>
+                    <button class="admin-tab" id="tab-users-btn">Users</button>
                 </div>
 
                 <!-- Tasks tab -->
@@ -239,6 +240,17 @@
                         to unlock their mission.</p>
                     <div id="qr-codes-grid"></div>
                     <button class="btn-primary" id="btn-print-qr">🖨️ Print All QR Codes</button>
+                </div>
+
+                <!-- Users tab -->
+                <div id="tab-users" class="hidden">
+                    <div class="admin-users-header">
+                        <h3>Player Logs</h3>
+                        <button class="btn-icon" id="btn-refresh-users" title="Refresh">🔄</button>
+                    </div>
+                    <div id="admin-users-list">
+                        <div class="admin-user-loading">Loading players...</div>
+                    </div>
                 </div>
             </div>
 

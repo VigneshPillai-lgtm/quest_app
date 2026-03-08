@@ -1312,6 +1312,90 @@ body {
   color: var(--text-muted);
 }
 
+/* Admin Users Tab */
+.admin-users-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 0 4px;
+}
+
+.admin-users-header h3 {
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+#admin-users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-user-loading {
+  text-align: center;
+  padding: 24px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+.admin-user-item {
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-user-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-user-email {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.admin-user-xp {
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--orange-dark);
+  background: rgba(125, 211, 252, 0.2);
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.admin-user-progress {
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-user-venues {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.admin-venue-badge {
+  font-size: 10px;
+  background: var(--green);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
 /* ==========================================
    XP TOAST
    ========================================== */
