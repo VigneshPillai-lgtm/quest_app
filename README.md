@@ -58,9 +58,7 @@ Skyfall is an interactive campus explorer web application designed to gamify ori
 
 To access the Admin Panel, look for the gear icon (⚙️) in the top-right corner of the HUD after the app launches. 
 
-- **Default Admin Login:**
-  - **Email:** `vigroundq@gmail.com`
-  - **Password:** `skyfall`
+
 
 ### Sub-tabs in the Admin Panel
 1. **Tasks:** Assign descriptive missions to each campus block.
