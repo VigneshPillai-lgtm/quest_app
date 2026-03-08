@@ -33,9 +33,11 @@ let state = {
 // ==========================================
 // API BASE URL
 // ==========================================
-// Calculate backend URL — use live Render in production, localhost for development
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? 'http://localhost:3000'
+// Calculate backend URL
+const hostname = window.location.hostname;
+const isLocal = hostname === 'localhost' || hostname === '127.0.0.1' || hostname.startsWith('192.168.') || hostname.startsWith('10.') || hostname === '';
+const API_BASE = isLocal
+    ? `http://${hostname || 'localhost'}:3000`
     : 'https://skyfall-backend.onrender.com';
 
 function loadState() {
@@ -532,7 +534,8 @@ async function fetchAdminUsers() {
             list.innerHTML = `<div class="admin-user-loading">Failed to load: ${(data && data.error) || 'Unknown error'}</div>`;
         }
     } catch (err) {
-        list.innerHTML = '<div class="admin-user-loading">Network error loading players.</div>';
+        console.error('Fetch players error:', err);
+        list.innerHTML = `<div class="admin-user-loading">Error loading players: ${err.message || 'Network disconnected'}</div>`;
     }
 }
 
