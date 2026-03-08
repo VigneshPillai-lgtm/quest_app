@@ -9,14 +9,11 @@
 // CAMPUS BLOCKS CONFIG
 // ==========================================
 const BLOCKS = [
-    { id: 'A', name: 'Block A', icon: '🏫', xpReward: 50 },
-    { id: 'B', name: 'Block B', icon: '🔬', xpReward: 50 },
-    { id: 'C', name: 'Block C', icon: '📚', xpReward: 50 },
-    { id: 'D', name: 'Block D', icon: '🖥️', xpReward: 50 },
-    { id: 'E', name: 'Block E', icon: '🎨', xpReward: 50 },
-    { id: 'F', name: 'Block F', icon: '⚗️', xpReward: 50 },
-    { id: 'G', name: 'Block G', icon: '🏃', xpReward: 50 },
-    { id: 'H', name: 'Block H', icon: '🌿', xpReward: 50 },
+    { id: 'A', name: 'Admin venue', icon: '🏛️', xpReward: 50 },
+    { id: 'B', name: 'Humanities venue', icon: '📚', xpReward: 50 },
+    { id: 'C', name: 'Main venue', icon: '🏫', xpReward: 50 },
+    { id: 'D', name: 'Green park', icon: '🌳', xpReward: 50 },
+    { id: 'E', name: 'Chavra Square', icon: '⛲', xpReward: 50 },
 ];
 
 const XP_PER_LEVEL = 400; // total XP for full bar
@@ -30,7 +27,7 @@ let state = {
     playerEmail: '',
     isAdmin: false,
     xp: 0,
-    blocks: {}, // id -> { visited, completed, task }
+    venues: {}, // id -> { visited, completed, task }
 };
 
 // ==========================================
@@ -42,10 +39,10 @@ const API_BASE = window.location.hostname === 'localhost' || window.location.hos
     : `http://${window.location.hostname}:3000`;
 
 function loadState() {
-    // Make sure all blocks exist in state
+    // Make sure all venues exist in state
     BLOCKS.forEach(b => {
-        if (!state.blocks[b.id]) {
-            state.blocks[b.id] = { visited: false, completed: false, task: '' };
+        if (!state.venues[b.id]) {
+            state.venues[b.id] = { visited: false, completed: false, task: '' };
         }
     });
 
@@ -74,7 +71,7 @@ function saveState() {
             body: JSON.stringify({
                 email: state.playerEmail,
                 xp: state.xp,
-                blocks: state.blocks
+                venues: state.venues
             })
         }).catch(err => console.log('Offline: Sync delayed.'));
     }
@@ -116,7 +113,7 @@ function updateHUD() {
     document.getElementById('xp-bar').style.width = pct + '%';
     document.getElementById('xp-label').textContent = state.xp + ' XP';
 
-    const completed = BLOCKS.filter(b => state.blocks[b.id]?.completed).length;
+    const completed = BLOCKS.filter(b => state.venues[b.id]?.completed).length;
     document.getElementById('badge-count').textContent = `${completed}/${BLOCKS.length}`;
 
     // Render avatar initial
@@ -130,19 +127,19 @@ function updateHUD() {
 function renderMap() {
     const map = document.getElementById('campus-map');
     map.innerHTML = '';
-    BLOCKS.forEach(block => {
-        const bs = state.blocks[block.id] || {};
+    BLOCKS.forEach(venue => {
+        const bs = state.venues[venue.id] || {};
         const el = document.createElement('div');
         const cls = bs.completed ? 'completed' : bs.visited ? 'visited' : '';
-        el.className = `block-marker ${cls}`;
-        el.id = `marker-${block.id}`;
+        el.className = `venue-marker ${cls}`;
+        el.id = `marker-${venue.id}`;
         el.innerHTML = `
-      <div class="block-pulse"></div>
-      <div class="block-icon">${block.icon}</div>
-      <div class="block-name">${block.name}</div>
-      <div class="block-status-dot"></div>
+      <div class="venue-pulse"></div>
+      <div class="venue-icon">${venue.icon}</div>
+      <div class="venue-name">${venue.name}</div>
+      <div class="venue-status-dot"></div>
     `;
-        el.addEventListener('click', () => openBlockPanel(block.id));
+        el.addEventListener('click', () => openBlockPanel(venue.id));
         map.appendChild(el);
     });
 }
@@ -159,8 +156,8 @@ function renderProgress() {
     grid.innerHTML = '';
     trophies.innerHTML = '';
 
-    BLOCKS.forEach(block => {
-        const bs = state.blocks[block.id] || {};
+    BLOCKS.forEach(venue => {
+        const bs = state.venues[venue.id] || {};
         const cls = bs.completed ? 'completed' : bs.visited ? 'visited' : '';
         const stateLabel = bs.completed ? 'Completed' : bs.visited ? 'Visited' : 'Not Visited';
         const check = bs.completed ? '✅' : bs.visited ? '👁' : '⬜';
@@ -168,10 +165,10 @@ function renderProgress() {
         card.className = `progress-card ${cls}`;
         card.innerHTML = `
       <div class="pc-top">
-        <span class="pc-icon">${block.icon}</span>
+        <span class="pc-icon">${venue.icon}</span>
         <span class="pc-check">${check}</span>
       </div>
-      <div class="pc-name">${block.name}</div>
+      <div class="pc-name">${venue.name}</div>
       <div class="pc-state ${cls}">${stateLabel}</div>
     `;
         grid.appendChild(card);
@@ -179,7 +176,7 @@ function renderProgress() {
         if (bs.completed) {
             const trophy = document.createElement('span');
             trophy.className = 'trophy-badge';
-            trophy.textContent = block.icon;
+            trophy.textContent = venue.icon;
             trophies.appendChild(trophy);
         }
     });
@@ -194,15 +191,15 @@ function renderProgress() {
 // ==========================================
 let currentBlockId = null;
 
-function openBlockPanel(blockId) {
-    const block = BLOCKS.find(b => b.id === blockId);
-    if (!block) return;
-    const bs = state.blocks[blockId] || {};
-    currentBlockId = blockId;
+function openBlockPanel(venueId) {
+    const venue = BLOCKS.find(b => b.id === venueId);
+    if (!venue) return;
+    const bs = state.venues[venueId] || {};
+    currentBlockId = venueId;
 
     // Header
-    document.getElementById('panel-icon').textContent = block.icon;
-    document.getElementById('panel-name').textContent = block.name;
+    document.getElementById('panel-icon').textContent = venue.icon;
+    document.getElementById('panel-name').textContent = venue.name;
 
     const badge = document.getElementById('panel-badge');
     badge.textContent = bs.completed ? 'Completed' : bs.visited ? 'Visited' : 'Not Visited';
@@ -213,7 +210,7 @@ function openBlockPanel(blockId) {
     document.getElementById('panel-task').textContent = taskText;
 
     // XP reward
-    document.getElementById('panel-xp-reward').textContent = `+${block.xpReward} XP`;
+    document.getElementById('panel-xp-reward').textContent = `+${venue.xpReward} XP`;
 
     // Check-in status
     document.getElementById('panel-checkin-status').textContent = bs.visited ? 'Yes ✓' : 'No';
@@ -238,25 +235,25 @@ function openBlockPanel(blockId) {
     }
 
     // Show panel
-    document.getElementById('block-overlay').classList.remove('hidden');
-    document.getElementById('block-panel').classList.remove('hidden');
+    document.getElementById('venue-overlay').classList.remove('hidden');
+    document.getElementById('venue-panel').classList.remove('hidden');
 }
 
 function closeBlockPanel() {
-    document.getElementById('block-overlay').classList.add('hidden');
-    document.getElementById('block-panel').classList.add('hidden');
+    document.getElementById('venue-overlay').classList.add('hidden');
+    document.getElementById('venue-panel').classList.add('hidden');
     currentBlockId = null;
 }
 
 // Check in
 document.getElementById('btn-checkin')?.addEventListener('click', () => {
     if (!currentBlockId) return;
-    state.blocks[currentBlockId].visited = true;
+    state.venues[currentBlockId].visited = true;
     saveState();
 
     // Refresh panel
-    const block = BLOCKS.find(b => b.id === currentBlockId);
-    const bs = state.blocks[currentBlockId];
+    const venue = BLOCKS.find(b => b.id === currentBlockId);
+    const bs = state.venues[currentBlockId];
     const badge = document.getElementById('panel-badge');
     badge.textContent = 'Visited';
     badge.className = 'panel-status-badge visited';
@@ -266,7 +263,7 @@ document.getElementById('btn-checkin')?.addEventListener('click', () => {
 
     // Update marker
     const marker = document.getElementById(`marker-${currentBlockId}`);
-    if (marker) { marker.className = 'block-marker visited'; }
+    if (marker) { marker.className = 'venue-marker visited'; }
 
     updateHUD();
     showToast('📍 Checked In!');
@@ -275,12 +272,12 @@ document.getElementById('btn-checkin')?.addEventListener('click', () => {
 // Complete task
 document.getElementById('btn-complete')?.addEventListener('click', () => {
     if (!currentBlockId) return;
-    const block = BLOCKS.find(b => b.id === currentBlockId);
-    const bs = state.blocks[currentBlockId];
+    const venue = BLOCKS.find(b => b.id === currentBlockId);
+    const bs = state.venues[currentBlockId];
     if (!bs.visited) return;
 
-    state.blocks[currentBlockId].completed = true;
-    state.xp += block.xpReward;
+    state.venues[currentBlockId].completed = true;
+    state.xp += venue.xpReward;
     saveState();
 
     // Refresh panel
@@ -292,15 +289,15 @@ document.getElementById('btn-complete')?.addEventListener('click', () => {
 
     // Update marker
     const marker = document.getElementById(`marker-${currentBlockId}`);
-    if (marker) { marker.className = 'block-marker completed'; }
+    if (marker) { marker.className = 'venue-marker completed'; }
 
     updateHUD();
-    showXpToast(block.xpReward);
+    showXpToast(venue.xpReward);
 });
 
 // Close panel
 document.getElementById('btn-panel-close')?.addEventListener('click', closeBlockPanel);
-document.getElementById('block-overlay')?.addEventListener('click', closeBlockPanel);
+document.getElementById('venue-overlay')?.addEventListener('click', closeBlockPanel);
 
 // ==========================================
 // SCAN BUTTON (center nav) & QR LOGIC
@@ -319,7 +316,7 @@ function startScanner() {
     scannerOverlay.classList.remove('hidden');
     scannerModal.classList.remove('hidden');
     scanResultContainer.classList.add('hidden');
-    document.getElementById('scanner-hint').textContent = 'Point your camera at the QR code on the block board';
+    document.getElementById('scanner-hint').textContent = 'Point your camera at the QR code on the venue board';
 
     // Request camera
     navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function (stream) {
@@ -368,33 +365,33 @@ function tick() {
 function handleScanSuccess(data) {
     // Expected format: "SKYFALL_BLOCK_A"
     if (data.startsWith('SKYFALL_BLOCK_')) {
-        const blockId = data.replace('SKYFALL_BLOCK_', '');
-        const block = BLOCKS.find(b => b.id === blockId);
+        const venueId = data.replace('SKYFALL_BLOCK_', '');
+        const venue = BLOCKS.find(b => b.id === venueId);
 
-        if (block) {
+        if (venue) {
             scanning = false; // pause to show result
-            scanResultText.textContent = `Found: ${block.name}!`;
+            scanResultText.textContent = `Found: ${venue.name}!`;
             scanResultContainer.classList.remove('hidden');
 
             // Mark as visited automatically if not already
-            if (!state.blocks[blockId].visited) {
-                state.blocks[blockId].visited = true;
+            if (!state.venues[venueId].visited) {
+                state.venues[venueId].visited = true;
                 saveState();
                 updateHUD();
                 renderMap();
-                showToast(`📍 Checked into ${block.name}!`);
+                showToast(`📍 Checked into ${venue.name}!`);
             }
 
-            // Wait 1.5s then close scanner and open block panel
+            // Wait 1.5s then close scanner and open venue panel
             setTimeout(() => {
                 stopScanner();
-                openBlockPanel(blockId);
+                openBlockPanel(venueId);
             }, 1500);
             return;
         }
     }
 
-    // If we drop down here, it wasn't a valid block QR code
+    // If we drop down here, it wasn't a valid venue QR code
     scanResultText.textContent = "Invalid QR Code format.";
     scanResultContainer.classList.remove('hidden');
     setTimeout(() => {
@@ -475,13 +472,13 @@ document.getElementById('admin-pass').addEventListener('keydown', (e) => {
 function renderAdminTasks() {
     const list = document.getElementById('admin-task-list');
     list.innerHTML = '';
-    BLOCKS.forEach(block => {
-        const bs = state.blocks[block.id] || {};
+    BLOCKS.forEach(venue => {
+        const bs = state.venues[venue.id] || {};
         const item = document.createElement('div');
         item.className = 'admin-task-item';
         item.innerHTML = `
-      <label><span>${block.icon}</span> ${block.name}</label>
-      <textarea id="admin-task-${block.id}" placeholder="Enter task for ${block.name}…">${bs.task || ''}</textarea>
+      <label><span>${venue.icon}</span> ${venue.name}</label>
+      <textarea id="admin-task-${venue.id}" placeholder="Enter task for ${venue.name}…">${bs.task || ''}</textarea>
     `;
         list.appendChild(item);
     });
@@ -507,19 +504,19 @@ function renderQRCodes() {
     const grid = document.getElementById('qr-codes-grid');
     if (grid.children.length > 0) return; // Already rendered
 
-    BLOCKS.forEach(block => {
+    BLOCKS.forEach(venue => {
         const wrap = document.createElement('div');
         wrap.className = 'admin-qr-item';
         wrap.innerHTML = `
-            <h4>${block.icon} ${block.name}</h4>
-            <div id="qrcode-${block.id}" class="qr-canvas-wrap"></div>
-            <p>Code: SKYFALL_BLOCK_${block.id}</p>
+            <h4>${venue.icon} ${venue.name}</h4>
+            <div id="qrcode-${venue.id}" class="qr-canvas-wrap"></div>
+            <p>Code: SKYFALL_BLOCK_${venue.id}</p>
         `;
         grid.appendChild(wrap);
 
         // Generate QR code
-        new QRCode(document.getElementById(`qrcode-${block.id}`), {
-            text: `SKYFALL_BLOCK_${block.id}`,
+        new QRCode(document.getElementById(`qrcode-${venue.id}`), {
+            text: `SKYFALL_BLOCK_${venue.id}`,
             width: 128,
             height: 128,
             colorDark: "#000000",
@@ -530,11 +527,11 @@ function renderQRCodes() {
 }
 
 document.getElementById('btn-save-tasks').addEventListener('click', () => {
-    BLOCKS.forEach(block => {
-        const el = document.getElementById(`admin-task-${block.id}`);
+    BLOCKS.forEach(venue => {
+        const el = document.getElementById(`admin-task-${venue.id}`);
         if (el) {
-            if (!state.blocks[block.id]) state.blocks[block.id] = { visited: false, completed: false, task: '' };
-            state.blocks[block.id].task = el.value.trim();
+            if (!state.venues[venue.id]) state.venues[venue.id] = { visited: false, completed: false, task: '' };
+            state.venues[venue.id].task = el.value.trim();
         }
     });
     saveState();
@@ -548,9 +545,9 @@ document.getElementById('btn-print-qr').addEventListener('click', () => {
 
 document.getElementById('btn-reset-all').addEventListener('click', () => {
     if (!confirm('Reset ALL student progress? This cannot be undone.')) return;
-    BLOCKS.forEach(block => {
-        const task = state.blocks[block.id]?.task || '';
-        state.blocks[block.id] = { visited: false, completed: false, task };
+    BLOCKS.forEach(venue => {
+        const task = state.venues[venue.id]?.task || '';
+        state.venues[venue.id] = { visited: false, completed: false, task };
     });
     state.xp = 0;
     saveState();
@@ -633,11 +630,11 @@ document.getElementById('btn-start').addEventListener('click', async () => {
             state.isAdmin = data.user.isAdmin;
             state.xp = data.user.xp;
 
-            // Merge blocks from DB
-            if (data.blocks) {
-                Object.keys(data.blocks).forEach(id => {
-                    if (state.blocks[id]) {
-                        state.blocks[id] = { ...state.blocks[id], ...data.blocks[id] };
+            // Merge venues from DB
+            if (data.venues) {
+                Object.keys(data.venues).forEach(id => {
+                    if (state.venues[id]) {
+                        state.venues[id] = { ...state.venues[id], ...data.venues[id] };
                     }
                 });
             }

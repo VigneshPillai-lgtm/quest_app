@@ -20,13 +20,13 @@ const db = new sqlite3.Database('./database.sqlite', (err) => {
             isAdmin BOOLEAN DEFAULT 0
         )`);
 
-        db.run(`CREATE TABLE IF NOT EXISTS user_blocks (
+        db.run(`CREATE TABLE IF NOT EXISTS user_venues (
             email TEXT,
-            block_id TEXT,
+            venue_id TEXT,
             visited BOOLEAN DEFAULT 0,
             completed BOOLEAN DEFAULT 0,
             task TEXT,
-            PRIMARY KEY (email, block_id),
+            PRIMARY KEY (email, venue_id),
             FOREIGN KEY (email) REFERENCES users(email)
         )`);
     }
@@ -60,7 +60,7 @@ app.post('/api/login', (req, res) => {
 
     // Hardcoded Admin Bypass if requested
     if (email === 'vigroundq@gmail.com' && password === 'skyfall') {
-        return res.json({ success: true, user: { email, xp: 0, isAdmin: true }, blocks: {} });
+        return res.json({ success: true, user: { email, xp: 0, isAdmin: true }, venues: {} });
     }
 
     db.get('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
@@ -70,38 +70,38 @@ app.post('/api/login', (req, res) => {
         const match = await bcrypt.compare(password, user.password);
         if (!match) return res.status(401).json({ error: 'Incorrect password' });
 
-        // Fetch their block progress
-        db.all('SELECT * FROM user_blocks WHERE email = ?', [email], (err, blocks) => {
-            const blocksObj = {};
-            if (!err && blocks) {
-                blocks.forEach(b => {
-                    blocksObj[b.block_id] = { visited: !!b.visited, completed: !!b.completed, task: b.task };
+        // Fetch their venue progress
+        db.all('SELECT * FROM user_venues WHERE email = ?', [email], (err, venues) => {
+            const venuesObj = {};
+            if (!err && venues) {
+                venues.forEach(v => {
+                    venuesObj[v.venue_id] = { visited: !!v.visited, completed: !!v.completed, task: v.task };
                 });
             }
-            res.json({ success: true, user: { email: user.email, xp: user.xp, isAdmin: !!user.isAdmin }, blocks: blocksObj });
+            res.json({ success: true, user: { email: user.email, xp: user.xp, isAdmin: !!user.isAdmin }, venues: venuesObj });
         });
     });
 });
 
 // Sync Progress Endpoint
 app.post('/api/sync', (req, res) => {
-    const { email, xp, blocks } = req.body;
+    const { email, xp, venues } = req.body;
     if (!email) return res.status(400).json({ error: 'Email required' });
 
     // Update XP
     db.run('UPDATE users SET xp = ? WHERE email = ?', [xp, email]);
 
-    // Update/Insert Blocks
-    if (blocks && Object.keys(blocks).length > 0) {
+    // Update/Insert Venues
+    if (venues && Object.keys(venues).length > 0) {
         const stmt = db.prepare(`
-            INSERT INTO user_blocks (email, block_id, visited, completed, task) 
+            INSERT INTO user_venues (email, venue_id, visited, completed, task) 
             VALUES (?, ?, ?, ?, ?)
-            ON CONFLICT(email, block_id) DO UPDATE SET 
+            ON CONFLICT(email, venue_id) DO UPDATE SET 
             visited=excluded.visited, completed=excluded.completed, task=excluded.task
         `);
 
-        for (const [blockId, data] of Object.entries(blocks)) {
-            stmt.run(email, blockId, data.visited ? 1 : 0, data.completed ? 1 : 0, data.task || '');
+        for (const [venueId, data] of Object.entries(venues)) {
+            stmt.run(email, venueId, data.visited ? 1 : 0, data.completed ? 1 : 0, data.task || '');
         }
         stmt.finalize();
     }

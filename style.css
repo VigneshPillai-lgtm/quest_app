@@ -12,37 +12,37 @@
 }
 
 :root {
-  /* Light Blue Sky Palette */
+  /* Pastel Retro Palette - Based on Reference */
   --sky-deep: #bae6fd;
   --sky-mid: #e0f2fe;
-  --sky-purple: #f0f9ff;
+  --sky-purple: #f8fafc;
   --sky-violet: #7dd3fc;
-  --orange-dark: #38bdf8;
-  --orange: #0ea5e9;
-  --orange-glow: #0284c7;
-  --gold: #fbbf24;
-  --gold-light: #fef08a;
-  --pink: #38bdf8;
-  --pink-light: #bae6fd;
+  --orange-dark: #5ba3d3;
+  --orange: #7dd3fc;
+  --orange-glow: #bae6fd;
+  --gold: #fde68a;
+  --gold-light: #fff9c4;
+  --pink: #fecdd3;
+  --pink-light: #fff1f2;
 
   /* Glass */
-  --glass-bg: rgba(255, 255, 255, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.8);
-  --glass-card: rgba(255, 255, 255, 0.75);
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(91, 163, 211, 0.2);
+  --glass-card: rgba(255, 255, 255, 0.85);
 
-  /* Text - Darker for readability on light background */
-  --text-primary: #0f172a;
-  --text-secondary: #334155;
+  /* Text */
+  --text-primary: #334155;
+  --text-secondary: #475569;
   --text-muted: #64748b;
 
   /* Status */
-  --green: #10b981;
-  --yellow: #f59e0b;
-  --red: #ef4444;
+  --green: #2dd4bf;
+  --yellow: #fbbf24;
+  --red: #fb7185;
 
-  --radius: 18px;
-  --radius-sm: 10px;
-  --transition: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  --radius: 20px;
+  --radius-sm: 12px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 html,
@@ -155,26 +155,42 @@ body {
   }
 }
 
-.logo-title {
-  font-size: clamp(48px, 12vw, 80px);
-  font-weight: 900;
-  letter-spacing: 0.14em;
-  background: linear-gradient(135deg, var(--orange-glow), var(--orange), var(--gold-light));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1;
-  text-shadow: none;
-  filter: drop-shadow(0 2px 8px rgba(2, 132, 199, 0.3));
+.logo-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  line-height: 1.1;
 }
 
-.logo-sub {
-  font-size: 16px;
-  font-weight: 400;
-  color: var(--text-secondary);
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  margin-top: 6px;
+.title-top {
+  font-family: 'Pacifico', cursive;
+  font-size: 28px;
+  color: #5ba3d3;
+  margin-bottom: -15px;
+  transform: rotate(-3deg);
+  z-index: 2;
+}
+
+.title-main {
+  font-family: 'Yellowtail', cursive;
+  font-size: clamp(54px, 14vw, 84px);
+  color: #fff9c4;
+  -webkit-text-stroke: 1.5px #5ba3d3;
+  text-shadow: 4px 4px 0px #5ba3d3;
+  padding: 0 10px;
+  margin-bottom: -10px;
+}
+
+.title-sub {
+  font-family: 'Outfit', sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  color: #5ba3d3;
+  letter-spacing: 0.1em;
+  font-style: italic;
+  margin-top: 18px;
 }
 
 .onboard-card {

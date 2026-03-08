@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Skyfall — Quest App </title>
-    <meta name="description" content="Skyfall campus explorer: visit blocks, scan QR codes, and complete missions!" />
+    <meta name="description" content="Skyfall campus explorer: visit venues, scan QR codes, and complete missions!" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <!-- PWA Requirements -->
@@ -13,13 +13,14 @@
     <meta name="theme-color" content="#38bdf8">
     <link rel="apple-touch-icon" href="favicon.ico">
 
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300..900;1,300..900&family=Pacifico&family=Yellowtail&display=swap"
         rel="stylesheet" />
     <!-- QR Code generator (for admin printable QRs) -->
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
     <!-- jsQR (for camera QR scanning) -->
     <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-    <link rel="stylesheet" href="style.css?v=3" />
+    <link rel="stylesheet" href="style.css?v=4" />
 </head>
 
 <body>
@@ -40,12 +41,13 @@
     <div class="screen" id="screen-onboard">
         <div class="onboard-container">
             <div class="logo-wrap">
-                <h1 class="logo-title">SKYFALL</h1>
-                <p class="logo-sub">Quest App</p>
+                <div class="title-top">Skyfall</div>
+                <h1 class="title-main">Quest App</h1>
+                <p class="title-sub">DAY GUIDE</p>
             </div>
             <div class="onboard-card">
                 <h2>Begin Your Journey</h2>
-                <p>Head to each campus block, scan the QR code, and unlock your mission!</p>
+                <p>Head to each campus venue, scan the QR code, and unlock your mission!</p>
                 <div class="input-group">
                     <label for="player-email">Email</label>
                     <input type="email" id="player-email" placeholder="student@campus.edu" autocomplete="email" />
@@ -88,7 +90,7 @@
                 <span class="map-label">🗺️ Campus Map</span>
                 <button class="btn-icon" id="btn-admin-open" title="Admin">⚙️</button>
             </div>
-            <p class="map-hint">Tap a block to see your mission, then scan its QR code on-site to unlock it.</p>
+            <p class="map-hint">Tap a venue to see your mission, then scan its QR code on-site to unlock it.</p>
             <div class="campus-map" id="campus-map"></div>
             <div class="map-legend">
                 <span class="legend-item"><span class="dot dot-unvisited"></span>Locked</span>
@@ -131,13 +133,13 @@
     </div>
 
     <!-- =========== BLOCK DETAIL PANEL =========== -->
-    <div class="overlay hidden" id="block-overlay"></div>
-    <div class="block-panel hidden" id="block-panel">
+    <div class="overlay hidden" id="venue-overlay"></div>
+    <div class="venue-panel hidden" id="venue-panel">
         <div class="panel-drag-handle"></div>
         <div class="panel-header">
-            <div class="panel-block-icon" id="panel-icon">🏫</div>
+            <div class="panel-venue-icon" id="panel-icon">🏫</div>
             <div>
-                <h2 class="panel-block-name" id="panel-name">Block A</h2>
+                <h2 class="panel-venue-name" id="panel-name">Block A</h2>
                 <span class="panel-status-badge" id="panel-badge">Locked</span>
             </div>
             <button class="btn-close" id="btn-panel-close">✕</button>
@@ -148,7 +150,7 @@
             <div id="state-locked">
                 <div class="locked-hint">
                     <div class="lock-icon">🔒</div>
-                    <p>Head to <strong id="locked-block-name">this block</strong> on campus and scan its QR code to
+                    <p>Head to <strong id="locked-venue-name">this venue</strong> on campus and scan its QR code to
                         unlock your mission!</p>
                 </div>
                 <button class="btn-scan-qr" id="btn-open-scanner">📷 Scan QR Code</button>
@@ -180,7 +182,7 @@
                     <div class="task-text" id="panel-task-done">—</div>
                 </div>
                 <div class="completed-banner">
-                    🎉 Mission Accomplished! You earned XP for this block.
+                    🎉 Mission Accomplished! You earned XP for this venue.
                 </div>
             </div>
 
@@ -206,7 +208,7 @@
                     <div class="scan-line"></div>
                 </div>
             </div>
-            <p class="scanner-hint" id="scanner-hint">Point your camera at the QR code on the block board</p>
+            <p class="scanner-hint" id="scanner-hint">Point your camera at the QR code on the venue board</p>
             <div class="scan-result hidden" id="scan-result">
                 <span id="scan-result-text"></span>
             </div>
@@ -248,7 +250,7 @@
 
                 <!-- QR tab -->
                 <div id="tab-qr" class="hidden">
-                    <p class="qr-tab-hint">Print these QR codes and place them at each block. Students scan them on-site
+                    <p class="qr-tab-hint">Print these QR codes and place them at each venue. Students scan them on-site
                         to unlock their mission.</p>
                     <div id="qr-codes-grid"></div>
                     <button class="btn-primary" id="btn-print-qr">🖨️ Print All QR Codes</button>
@@ -274,7 +276,7 @@
             });
         }
     </script>
-    <script src="app.js?v=6"></script>
+    <script src="app.js?v=7"></script>
 </body>
 
 </html>
