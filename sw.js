@@ -1,5 +1,5 @@
 // Service Worker for basic PWA caching
-const CACHE_NAME = 'skyfall-cache-v2';
+const CACHE_NAME = 'skyfall-cache-v3';
 const urlsToCache = [
     '/',
     '/index.html',
@@ -27,6 +27,11 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
+    // Bypass API requests and non-GET requests entirely
+    if (event.request.method !== 'GET' || event.request.url.includes('/api/')) {
+        return;
+    }
+
     // Network-First strategy to ensure latest files during development
     event.respondWith(
         fetch(event.request)

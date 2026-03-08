@@ -33,7 +33,22 @@ let state = {
     blocks: {}, // id -> { visited, completed, task }
 };
 
+// ==========================================
+// API BASE URL
+// ==========================================
+// Calculate backend URL dynamically (same host, port 3000)
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:3000'
+    : `http://${window.location.hostname}:3000`;
+
 function loadState() {
+    // Make sure all blocks exist in state
+    BLOCKS.forEach(b => {
+        if (!state.blocks[b.id]) {
+            state.blocks[b.id] = { visited: false, completed: false, task: '' };
+        }
+    });
+
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
@@ -44,19 +59,25 @@ function loadState() {
                 state.playerEmail = parsed.playerName + "@student.edu";
             }
         }
-        // Make sure all blocks exist in state
-        BLOCKS.forEach(b => {
-            if (!state.blocks[b.id]) {
-                state.blocks[b.id] = { visited: false, completed: false, task: '' };
-            }
-        });
     } catch (e) { }
 }
 
 function saveState() {
-    // In a real app with Firebase, this would be an async call to Firestore:
-    // firestore.collection('users').doc(state.playerEmail).set(state)
+    // Save locally for offline use
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+
+    // Sync to real SQLite Backend if logged in (not mock admin)
+    if (state.playerEmail && !state.isAdmin) {
+        fetch(`${API_BASE}/api/sync`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: state.playerEmail,
+                xp: state.xp,
+                blocks: state.blocks
+            })
+        }).catch(err => console.log('Offline: Sync delayed.'));
+    }
 }
 
 // ==========================================
@@ -228,7 +249,7 @@ function closeBlockPanel() {
 }
 
 // Check in
-document.getElementById('btn-checkin').addEventListener('click', () => {
+document.getElementById('btn-checkin')?.addEventListener('click', () => {
     if (!currentBlockId) return;
     state.blocks[currentBlockId].visited = true;
     saveState();
@@ -252,7 +273,7 @@ document.getElementById('btn-checkin').addEventListener('click', () => {
 });
 
 // Complete task
-document.getElementById('btn-complete').addEventListener('click', () => {
+document.getElementById('btn-complete')?.addEventListener('click', () => {
     if (!currentBlockId) return;
     const block = BLOCKS.find(b => b.id === currentBlockId);
     const bs = state.blocks[currentBlockId];
@@ -278,8 +299,8 @@ document.getElementById('btn-complete').addEventListener('click', () => {
 });
 
 // Close panel
-document.getElementById('btn-panel-close').addEventListener('click', closeBlockPanel);
-document.getElementById('block-overlay').addEventListener('click', closeBlockPanel);
+document.getElementById('btn-panel-close')?.addEventListener('click', closeBlockPanel);
+document.getElementById('block-overlay')?.addEventListener('click', closeBlockPanel);
 
 // ==========================================
 // SCAN BUTTON (center nav) & QR LOGIC
@@ -557,13 +578,18 @@ function showXpToast(amount) {
 }
 
 // ==========================================
-// ONBOARDING (Auth Mock)
+// ONBOARDING (SQLite Backend Auth)
 // ==========================================
-document.getElementById('btn-start').addEventListener('click', () => {
+document.getElementById('btn-start').addEventListener('click', async () => {
+    console.log('[DEBUG] Login button clicked');
     const emailInput = document.getElementById('player-email').value.trim();
     const passInput = document.getElementById('player-password').value.trim();
+    const btn = document.getElementById('btn-start');
+
+    console.log('[DEBUG] Form values:', { emailInput, passInput });
 
     if (!emailInput || !passInput) {
+        console.log('[DEBUG] Missing input, returning');
         if (!emailInput) {
             document.getElementById('player-email').focus();
             document.getElementById('player-email').style.borderColor = 'rgba(255,94,122,0.8)';
@@ -579,15 +605,75 @@ document.getElementById('btn-start').addEventListener('click', () => {
     // Check for admin credentials
     if (emailInput === 'vigroundq@gmail.com' && passInput === 'skyfall') {
         state.isAdmin = true;
+        state.playerEmail = emailInput;
+        saveState();
+        startApp();
+        return;
     } else {
         state.isAdmin = false;
     }
 
-    // In a real app with Firebase, this would be:
-    // firebase.auth().signInWithEmailAndPassword(emailInput, passInput).then(user => { state.playerEmail = user.email; loadFirestoreState() })
-    state.playerEmail = emailInput;
-    saveState();
-    startApp();
+    // Attempt Login or Registration via Backend
+    const origText = btn.textContent;
+    btn.textContent = 'Connecting...';
+    btn.disabled = true;
+
+    try {
+        let response = await fetch(`${API_BASE}/api/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: emailInput, password: passInput })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // Login Success
+            state.playerEmail = data.user.email;
+            state.isAdmin = data.user.isAdmin;
+            state.xp = data.user.xp;
+
+            // Merge blocks from DB
+            if (data.blocks) {
+                Object.keys(data.blocks).forEach(id => {
+                    if (state.blocks[id]) {
+                        state.blocks[id] = { ...state.blocks[id], ...data.blocks[id] };
+                    }
+                });
+            }
+            saveState();
+            startApp();
+
+        } else if (data.error === 'Account not found') {
+            // Auto-Register Sequence
+            btn.textContent = 'Registering...';
+            let regRes = await fetch(`${API_BASE}/api/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: emailInput, password: passInput })
+            });
+            const regData = await regRes.json();
+
+            if (regRes.ok) {
+                state.playerEmail = regData.user.email;
+                state.isAdmin = false;
+                state.xp = 0;
+                saveState();
+                startApp();
+            } else {
+                alert(regData.error || 'Failed to register account.');
+            }
+        } else {
+            // Incorrect password or other error
+            alert(data.error || 'Authentication Failed');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Could not connect to database server. Ensure it is running on PORT 3000.');
+    } finally {
+        btn.textContent = origText;
+        btn.disabled = false;
+    }
 });
 
 document.getElementById('player-password').addEventListener('keydown', (e) => {
@@ -606,10 +692,12 @@ function startApp() {
 }
 
 function init() {
+    console.log('[DEBUG] App initialized');
     createStars();
     loadState();
 
     if (state.playerEmail) {
+        console.log('[DEBUG] Skipping onboarding for:', state.playerEmail);
         // Returning user — skip onboarding
         startApp();
     }
