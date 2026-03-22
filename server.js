@@ -17,7 +17,9 @@ const db = new sqlite3.Database('./database.sqlite', (err) => {
             email TEXT PRIMARY KEY,
             password TEXT NOT NULL,
             xp INTEGER DEFAULT 0,
-            isAdmin BOOLEAN DEFAULT 0
+            isAdmin BOOLEAN DEFAULT 0,
+            repoLink TEXT DEFAULT "",
+            driveLink TEXT DEFAULT ""
         )`);
 
         db.run(`CREATE TABLE IF NOT EXISTS user_venues (
@@ -46,7 +48,7 @@ app.post('/api/register', async (req, res) => {
                 }
                 return res.status(500).json({ error: 'Database error' });
             }
-            res.status(201).json({ success: true, user: { email, xp: 0, isAdmin: false } });
+            res.status(201).json({ success: true, user: { email, xp: 0, isAdmin: false, repoLink: '', driveLink: '' } });
         });
     } catch (err) {
         res.status(500).json({ error: 'Server error' });
@@ -78,7 +80,11 @@ app.post('/api/login', (req, res) => {
                     venuesObj[v.venue_id] = { visited: !!v.visited, completed: !!v.completed, task: v.task };
                 });
             }
-            res.json({ success: true, user: { email: user.email, xp: user.xp, isAdmin: !!user.isAdmin }, venues: venuesObj });
+            res.json({ 
+                success: true, 
+                user: { email: user.email, xp: user.xp, isAdmin: !!user.isAdmin, repoLink: user.repoLink || '', driveLink: user.driveLink || '' }, 
+                venues: venuesObj 
+            });
         });
     });
 });
@@ -120,7 +126,7 @@ app.get('/api/admin/users', (req, res) => {
         return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    db.all('SELECT email, xp, isAdmin FROM users WHERE isAdmin = 0 ORDER BY xp DESC', [], (err, users) => {
+    db.all('SELECT email, xp, isAdmin, repoLink, driveLink FROM users WHERE isAdmin = 0 ORDER BY xp DESC', [], (err, users) => {
         if (err) return res.status(500).json({ error: 'Database error' });
 
         db.all('SELECT email, venue_id, completed FROM user_venues WHERE completed = 1', [], (err, venues) => {
@@ -132,6 +138,8 @@ app.get('/api/admin/users', (req, res) => {
                 return {
                     email: user.email,
                     xp: user.xp,
+                    repoLink: user.repoLink || '',
+                    driveLink: user.driveLink || '',
                     completedCount: userVenues.length,
                     venues: userVenues.map(v => v.venue_id)
                 };
@@ -141,6 +149,18 @@ app.get('/api/admin/users', (req, res) => {
         });
     });
 });
+
+// URL Submission Endpoint
+app.post('/api/submit-project', (req, res) => {
+    const { email, repoLink, driveLink } = req.body;
+    if (!email) return res.status(400).json({ error: 'Email required' });
+
+    db.run('UPDATE users SET repoLink = ?, driveLink = ? WHERE email = ?', [repoLink || '', driveLink || '', email], function(err) {
+        if (err) return res.status(500).json({ error: 'Database error' });
+        res.json({ success: true });
+    });
+});
+
 
 // Start Server
 const PORT = 3000;

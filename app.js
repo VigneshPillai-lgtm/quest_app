@@ -27,6 +27,8 @@ let state = {
     playerEmail: '',
     isAdmin: false,
     xp: 0,
+    repoLink: '',
+    driveLink: '',
     venues: {}, // id -> { visited, completed, task }
 };
 
@@ -458,6 +460,44 @@ function closeAdmin() {
 document.getElementById('btn-admin-close').addEventListener('click', closeAdmin);
 document.getElementById('admin-overlay').addEventListener('click', closeAdmin);
 
+// LOGOUT
+document.getElementById('btn-logout').addEventListener('click', () => {
+    if (!confirm('Log out of Skyfall?')) return;
+
+    // Stop camera
+    stopScanner();
+
+    // Clear saved session
+    localStorage.removeItem(STORAGE_KEY);
+
+    // Reset in-memory state
+    state = { playerEmail: '', isAdmin: false, xp: 0, repoLink: '', driveLink: '', venues: {} };
+    BLOCKS.forEach(b => { state.venues[b.id] = { visited: false, completed: false, task: '' }; });
+
+    // Hide app shell
+    const shell = document.getElementById('app-shell');
+    shell.classList.add('hidden');
+    shell.classList.remove('launch-rise');
+    document.body.classList.remove('app-launched');
+
+    // Show onboarding fresh
+    const onboard = document.getElementById('screen-onboard');
+    onboard.classList.remove('fly-up', 'hidden');
+    onboard.style.opacity = '0';
+    onboard.style.transform = 'translateY(-30px)';
+    requestAnimationFrame(() => {
+        onboard.style.transition = 'opacity 0.45s ease, transform 0.45s ease';
+        onboard.style.opacity = '1';
+        onboard.style.transform = 'translateY(0)';
+    });
+
+    // Clear form fields
+    document.getElementById('player-email').value = '';
+    document.getElementById('player-password').value = '';
+});
+
+
+
 document.getElementById('btn-admin-login').addEventListener('click', () => {
     const pass = document.getElementById('admin-pass').value.trim();
     if (pass === ADMIN_PASSWORD) {
@@ -565,12 +605,21 @@ function renderAdminUsers(users) {
             venueHtml = '<div class="admin-user-progress">No venues completed</div>';
         }
 
+        let submissionHtml = '';
+        if (user.repoLink || user.driveLink) {
+            submissionHtml = '<div style="margin-top: 6px; font-size: 11px; color: var(--text-secondary);">';
+            if (user.repoLink) submissionHtml += `<a href="${user.repoLink}" target="_blank" style="color: var(--primary); margin-right: 8px;">🔗 GitHub</a>`;
+            if (user.driveLink) submissionHtml += `<a href="${user.driveLink}" target="_blank" style="color: var(--primary);">📁 Drive</a>`;
+            submissionHtml += '</div>';
+        }
+
         item.innerHTML = `
             <div class="admin-user-top">
                 <span class="admin-user-email">${user.email}</span>
                 <span class="admin-user-xp">${user.xp} XP</span>
             </div>
             ${venueHtml}
+            ${submissionHtml}
         `;
         list.appendChild(item);
     });
@@ -705,6 +754,8 @@ document.getElementById('btn-start').addEventListener('click', async () => {
             state.playerEmail = data.user.email;
             state.isAdmin = data.user.isAdmin;
             state.xp = data.user.xp;
+            state.repoLink = data.user.repoLink || '';
+            state.driveLink = data.user.driveLink || '';
 
             // Merge venues from DB
             if (data.venues) {
@@ -731,6 +782,8 @@ document.getElementById('btn-start').addEventListener('click', async () => {
                 state.playerEmail = regData.user.email;
                 state.isAdmin = false;
                 state.xp = 0;
+                state.repoLink = '';
+                state.driveLink = '';
                 saveState();
                 startApp();
             } else {
@@ -796,3 +849,44 @@ function init() {
 }
 
 init();
+
+// ==========================================
+// PROJECT SUBMISSION
+// ==========================================
+document.getElementById('btn-submit-project').addEventListener('click', async () => {
+    const btn = document.getElementById('btn-submit-project');
+    const msg = document.getElementById('submit-success-msg');
+    
+    state.repoLink = document.getElementById('submit-github').value.trim();
+    state.driveLink = document.getElementById('submit-drive').value.trim();
+    
+    btn.disabled = true;
+    btn.textContent = 'Saving...';
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/submit-project`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: state.playerEmail,
+                repoLink: state.repoLink,
+                driveLink: state.driveLink
+            })
+        });
+        
+        if (res.ok) {
+            msg.classList.remove('hidden');
+            setTimeout(() => { msg.classList.add('hidden'); }, 3000);
+            saveState();
+        } else {
+            alert('Failed to save project links. Please try again.');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Network error while saving project links.');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '📤 Submit Project';
+    }
+});
+

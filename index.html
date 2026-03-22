@@ -82,6 +82,7 @@
                 <div class="badge-count" id="badge-count">0/5</div>
                 <span class="badge-label">Venues</span>
                 <button class="btn-icon" id="btn-admin-open" title="Admin">⚙️</button>
+                <button class="btn-icon" id="btn-logout" title="Log Out">🚪</button>
             </div>
         </header>
 
@@ -128,8 +129,66 @@
             </div>
         </div>
 
+        <!-- SCREEN: HOME (About) -->
+        <div class="screen-inner hidden" id="screen-home">
+            <div class="home-header">
+                <h2>Welcome to Skyfall 🌟</h2>
+            </div>
+            <div class="home-content">
+                <div class="home-card">
+                    <h3>Your Campus Mission</h3>
+                    <p>
+                        Explore the 5 hidden venues scattered around campus. At each location, you'll find a QR code. 
+                        Use the <strong>Scan</strong> tab to unlock your challenge and earn XP!
+                    </p>
+                </div>
+                <div class="home-card">
+                    <h3>Rules of the Game</h3>
+                    <ul class="home-rules-list">
+                        <li>📍 Visit venues in any order.</li>
+                        <li>🤝 Collaborate, but submit your own project.</li>
+                        <li>🏆 The explorer with the most XP wins!</li>
+                    </ul>
+                </div>
+                <div class="home-card">
+                    <h3>Need Help?</h3>
+                    <p>Find a roaming mentor in a blue shirt if you get stuck or need directions.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN: SUBMIT -->
+        <div class="screen-inner hidden" id="screen-submit">
+            <div class="submit-header">
+                <h2>Project Submission</h2>
+                <p>Submit your final project links here to be eligible for prizes!</p>
+            </div>
+            <div class="submit-card">
+                <div class="input-group">
+                    <label for="submit-github">GitHub Repository Link</label>
+                    <input type="url" id="submit-github" placeholder="https://github.com/username/project" />
+                </div>
+                <div class="input-group">
+                    <label for="submit-drive">Google Drive Link (Slides/Video)</label>
+                    <input type="url" id="submit-drive" placeholder="https://drive.google.com/..." />
+                </div>
+                <button class="btn-primary" id="btn-submit-project">📤 Submit Project</button>
+                <div id="submit-success-msg" class="hidden" style="color: var(--green); margin-top: 12px; font-weight: bold; text-align: center;">
+                    ✅ Project saved successfully!
+                </div>
+            </div>
+        </div>
+
         <!-- BOTTOM NAV -->
         <nav class="bottom-nav">
+            <button class="nav-btn" id="nav-home" data-screen="home">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home</span>
+            </button>
+            <button class="nav-btn" id="nav-submit" data-screen="submit">
+                <span class="nav-icon">💻</span>
+                <span class="nav-label">Submit</span>
+            </button>
             <button class="nav-btn active" id="nav-scan-tab" data-screen="scan">
                 <span class="nav-icon">📷</span>
                 <span class="nav-label">Scan</span>
@@ -273,7 +332,7 @@
             });
         }
     </script>
-    <script src="app.js?v=7"></script>
+    <script src="app.js?v=9"></script>
 </body>
 
 </html>

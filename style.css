@@ -1755,3 +1755,102 @@ body {
 .bottom-nav .nav-btn {
   flex: 1;
 }
+/* =========================================
+   HOME (ABOUT) SCREEN
+   ========================================= */
+#screen-home {
+  padding: 24px;
+}
+
+.home-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.home-header h2 {
+  font-family: var(--font-fancy);
+  font-size: 32px;
+  color: var(--text-dark);
+}
+
+.home-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.home-card {
+  background: var(--surface-bg);
+  border: 1.5px solid var(--border-color);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.home-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.home-card p {
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.home-rules-list {
+  padding-left: 20px;
+  color: var(--text-secondary);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.home-rules-list li {
+  margin-bottom: 4px;
+}
+
+
+/* =========================================
+   SUBMIT SCREEN
+   ========================================= */
+#screen-submit {
+  padding: 24px;
+}
+
+.submit-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.submit-header h2 {
+  font-family: var(--font-fancy);
+  font-size: 32px;
+  color: var(--text-dark);
+}
+
+.submit-header p {
+  color: var(--text-secondary);
+  font-size: 15px;
+  margin-top: 4px;
+}
+
+.submit-card {
+  background: var(--surface-bg);
+  border: 1.5px solid var(--border-color);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.submit-card .input-group {
+  margin-bottom: 0px; /* Overriding default */
+}
+
+#submit-success-msg {
+  animation: flyUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
