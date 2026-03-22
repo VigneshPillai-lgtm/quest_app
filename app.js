@@ -700,134 +700,25 @@ function showXpToast(amount) {
 }
 
 // ==========================================
-// ONBOARDING (SQLite Backend Auth)
+// ONBOARDING SKIPPED - Quest App Auto-Starts
 // ==========================================
-document.getElementById('btn-start').addEventListener('click', async () => {
-    console.log('[DEBUG] Login button clicked');
-    const emailInput = document.getElementById('player-email').value.trim();
-    const passInput = document.getElementById('player-password').value.trim();
-    const btn = document.getElementById('btn-start');
-
-    console.log('[DEBUG] Form values:', { emailInput, passInput });
-
-    if (!emailInput || !passInput) {
-        console.log('[DEBUG] Missing input, returning');
-        if (!emailInput) {
-            document.getElementById('player-email').focus();
-            document.getElementById('player-email').style.borderColor = 'rgba(255,94,122,0.8)';
-            setTimeout(() => document.getElementById('player-email').style.borderColor = '', 1200);
-        } else {
-            document.getElementById('player-password').focus();
-            document.getElementById('player-password').style.borderColor = 'rgba(255,94,122,0.8)';
-            setTimeout(() => document.getElementById('player-password').style.borderColor = '', 1200);
-        }
-        return;
-    }
-
-    // Check for admin credentials
-    if (emailInput === 'vigroundq@gmail.com' && passInput === 'skyfall') {
-        state.isAdmin = true;
-        state.playerEmail = emailInput;
-        saveState();
-        startApp();
-        return;
-    } else {
-        state.isAdmin = false;
-    }
-
-    // Attempt Login or Registration via Backend
-    const origText = btn.textContent;
-    btn.textContent = 'Connecting...';
-    btn.disabled = true;
-
-    try {
-        let response = await fetch(`${API_BASE}/api/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: emailInput, password: passInput })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            // Login Success
-            state.playerEmail = data.user.email;
-            state.isAdmin = data.user.isAdmin;
-            state.xp = data.user.xp;
-            state.repoLink = data.user.repoLink || '';
-            state.driveLink = data.user.driveLink || '';
-
-            // Merge venues from DB
-            if (data.venues) {
-                Object.keys(data.venues).forEach(id => {
-                    if (state.venues[id]) {
-                        state.venues[id] = { ...state.venues[id], ...data.venues[id] };
-                    }
-                });
-            }
-            saveState();
-            startApp();
-
-        } else if (data.error === 'Account not found') {
-            // Auto-Register Sequence
-            btn.textContent = 'Registering...';
-            let regRes = await fetch(`${API_BASE}/api/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: emailInput, password: passInput })
-            });
-            const regData = await regRes.json();
-
-            if (regRes.ok) {
-                state.playerEmail = regData.user.email;
-                state.isAdmin = false;
-                state.xp = 0;
-                state.repoLink = '';
-                state.driveLink = '';
-                saveState();
-                startApp();
-            } else {
-                alert(regData.error || 'Failed to register account.');
-            }
-        } else {
-            // Incorrect password or other error
-            alert(data.error || 'Authentication Failed');
-        }
-    } catch (err) {
-        console.error(err);
-        alert('⏳ Server is waking up (free tier). Please wait 30 seconds and try again!');
-    } finally {
-        btn.textContent = origText;
-        btn.disabled = false;
-    }
-});
-
-document.getElementById('player-password').addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') document.getElementById('btn-start').click();
-});
 
 // ==========================================
 // APP INIT
 // ==========================================
 function startApp() {
-    const onboard = document.getElementById('screen-onboard');
     const shell = document.getElementById('app-shell');
-
-    onboard.classList.add('fly-up');
-
-    setTimeout(() => {
-        shell.classList.remove('hidden');
-        shell.classList.add('launch-rise');
-        document.body.classList.add('app-launched');
-        updateHUD();
-        renderProgress(); // pre-render progress data
-    }, 550);
-
-    setTimeout(() => {
-        onboard.classList.add('hidden');
-        // Auto-start scanner after animation
-        startScanner();
-    }, 950);
+    const onboard = document.getElementById('screen-onboard');
+    
+    // Hide onboarding, show app
+    if (onboard) onboard.classList.add('hidden');
+    
+    shell.classList.remove('hidden');
+    shell.classList.add('launch-rise');
+    document.body.classList.add('app-launched');
+    updateHUD();
+    renderProgress();
+    startScanner();
 }
 
 function init() {
@@ -835,17 +726,19 @@ function init() {
     createStars();
     loadState();
 
-    // Pre-warm the Render backend so it's ready when user logs in
+    // Set default player if not set
+    if (!state.playerEmail) {
+        state.playerEmail = 'explorer@skyfall.local';
+        saveState();
+    }
+
+    // Pre-warm the Render backend
     fetch(`${API_BASE}/api/ping`).catch(() => {
         // Silently warm up — ignore errors
     });
 
-    if (state.playerEmail) {
-        console.log('[DEBUG] Skipping onboarding for:', state.playerEmail);
-        // Returning user — skip onboarding
-        startApp();
-    }
-    // else show onboarding (default)
+    // Start app immediately, skip login
+    startApp();
 }
 
 init();

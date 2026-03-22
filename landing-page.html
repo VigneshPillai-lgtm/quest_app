@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skyfall — India's Largest Teen Hackathon</title>
+    <meta name="description" content="Skyfall: India's largest teen hackathon. Build, learn, and connect with innovators across India." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300..900;1,300..900&family=Pacifico&family=Yellowtail&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="landing.css" />
+</head>
+
+<body>
+    <!-- ANIMATED BACKGROUND -->
+    <div class="animated-bg">
+        <div class="mountain mountain-1"></div>
+        <div class="mountain mountain-2"></div>
+        <div class="mountain mountain-3"></div>
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+        <canvas id="particle-canvas"></canvas>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span style="font-family: 'Pacifico', cursive; font-size: 1.5rem; color: var(--primary);">Skyfall</span>
+            </div>
+            <div class="nav-links">
+                <a href="#showcase">Showcase</a>
+                <a href="#leaderboard">Leaders</a>
+                <a href="#idea-generator">Ideas</a>
+                <a href="#faq">FAQ</a>
+                <a href="/index.html" class="nav-link-quest">🎮 Quest App</a>
+                <a href="#" class="btn-primary" id="nav-register">Join Now</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION - WIREFRAME STYLE -->
+    <section id="hero" class="hero">
+        <div class="hero-wrapper">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <span class="hero-badge">India's Largest Teen Hackathon 🚀</span>
+                    <h1 class="hero-title">
+                        48 Hours to
+                        <span class="gradient-text">Build the Future</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        Join 1000+ teen innovators from 50+ cities. Create amazing projects, learn from industry leaders, and win incredible prizes.
+                    </p>
+                    <div class="hero-buttons">
+                        <button class="btn-primary btn-lg" id="btn-register">Register Now</button>
+                        <button class="btn-secondary btn-lg">Learn More</button>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <svg class="hero-illustration" viewBox="0 0 400 400" fill="none">
+                        <!-- Sky -->
+                        <rect width="400" height="400" fill="url(#skyGradient)"/>
+                        <!-- Clouds -->
+                        <g class="floating-cloud">
+                            <ellipse cx="80" cy="80" rx="40" ry="25" fill="url(#cloudGradient1)"/>
+                            <ellipse cx="110" cy="75" rx="35" ry="22" fill="url(#cloudGradient1)"/>
+                            <ellipse cx="50" cy="85" rx="30" ry="20" fill="url(#cloudGradient1)"/>
+                        </g>
+                        <g class="floating-cloud" style="animation-delay: 2s;">
+                            <ellipse cx="320" cy="120" rx="35" ry="20" fill="url(#cloudGradient2)"/>
+                            <ellipse cx="350" cy="115" rx="40" ry="24" fill="url(#cloudGradient2)"/>
+                            <ellipse cx="290" cy="125" rx="30" ry="18" fill="url(#cloudGradient2)"/>
+                        </g>
+                        <!-- Flying bird -->
+                        <g class="flying-bird">
+                            <circle cx="200" cy="100" r="8" fill="url(#birdGradient)"/>
+                            <path d="M195 100 Q190 95 185 100" stroke="url(#birdGradient)" stroke-width="2" fill="none"/>
+                            <path d="M205 100 Q210 95 215 100" stroke="url(#birdGradient)" stroke-width="2" fill="none"/>
+                        </g>
+                        <!-- Code symbol -->
+                        <g class="code-symbol">
+                            <rect x="100" y="200" width="200" height="150" rx="10" fill="rgba(0,217,255,0.1)" stroke="url(#accentGradient)" stroke-width="2"/>
+                            <text x="200" y="230" font-size="24" fill="url(#accentGradient)" text-anchor="middle">&lt; CODE /&gt;</text>
+                            <circle cx="150" cy="280" r="6" fill="url(#accentGradient)"/>
+                            <circle cx="200" cy="280" r="6" fill="url(#accentGradient)"/>
+                            <circle cx="250" cy="280" r="6" fill="url(#accentGradient)"/>
+                        </g>
+                        <!-- Gradients -->
+                        <defs>
+                            <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#e0f7ff;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#ffffff;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="cloudGradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.9" />
+                                <stop offset="100%" style="stop-color:#e0f7ff;stop-opacity:0.7" />
+                            </linearGradient>
+                            <linearGradient id="cloudGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.85" />
+                                <stop offset="100%" style="stop-color:#b3e5ff;stop-opacity:0.6" />
+                            </linearGradient>
+                            <linearGradient id="birdGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00d9ff;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#4da6ff;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#00d9ff;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-number">1000+</div>
+                    <div class="stat-label">Teen Coders</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Cities</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">48</div>
+                    <div class="stat-label">Hours</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">Possibilities</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECT SHOWCASE SECTION -->
+    <section id="showcase" class="showcase">
+        <div class="container">
+            <div class="section-header">
+                <h2>Amazing Projects Built</h2>
+                <p>Check out incredible projects created by teen innovators at Skyfall</p>
+            </div>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-badge">🤖 AI/ML</div>
+                    <h3>AI Smart Tutor</h3>
+                    <p>Personalized learning platform using GPT and ML to adapt to each student's learning pace.</p>
+                    <div class="project-meta">
+                        <span class="team-tag">Team: 3</span>
+                        <span class="stack-tag">React, Python</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-badge">🎮 Gaming</div>
+                    <h3>Multiplayer RPG</h3>
+                    <p>Real-time multiplayer fantasy RPG with WebSockets and engaging gameplay mechanics.</p>
+                    <div class="project-meta">
+                        <span class="team-tag">Team: 4</span>
+                        <span class="stack-tag">Unity, WebSockets</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-badge">🌍 Web3</div>
+                    <h3>NFT Marketplace</h3>
+                    <p>Decentralized marketplace for digital art with blockchain integration and smart contracts.</p>
+                    <div class="project-meta">
+                        <span class="team-tag">Team: 2</span>
+                        <span class="stack-tag">Solidity, Next.js</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-badge">🏥 HealthTech</div>
+                    <h3>Mental Health AI</h3>
+                    <p>Confidential AI-powered mental health companion providing 24/7 support and resources.</p>
+                    <div class="project-meta">
+                        <span class="team-tag">Team: 3</span>
+                        <span class="stack-tag">Flask, React</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-badge">🛒 FinTech</div>
+                    <h3>Smart Budget App</h3>
+                    <p>Personal finance tracker with AI insights and smart spending recommendations.</p>
+                    <div class="project-meta">
+                        <span class="team-tag">Team: 2</span>
+                        <span class="stack-tag">Vue.js, Node.js</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-badge">📱 Mobile</div>
+                    <h3>Campus Connect</h3>
+                    <p>Mobile app connecting students, sharing events, and building college community instantly.</p>
+                    <div class="project-meta">
+                        <span class="team-tag">Team: 3</span>
+                        <span class="stack-tag">Flutter, Firebase</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LEADERBOARD SECTION -->
+    <section id="leaderboard" class="leaderboard">
+        <div class="container">
+            <div class="section-header">
+                <h2>Top Performers</h2>
+                <p>Leading the Pack 🏆</p>
+            </div>
+            <div class="leaderboard-content">
+                <div class="leaderboard-table">
+                    <div class="leaderboard-row header">
+                        <div class="rank">Rank</div>
+                        <div class="name">Builder</div>
+                        <div class="points">Points</div>
+                        <div class="badge">Badge</div>
+                    </div>
+                    <div class="leaderboard-row">
+                        <div class="rank">🥇</div>
+                        <div class="name">Alex Chen</div>
+                        <div class="points">4,850</div>
+                        <div class="badge">✨ Elite</div>
+                    </div>
+                    <div class="leaderboard-row">
+                        <div class="rank">🥈</div>
+                        <div class="name">Priya Sharma</div>
+                        <div class="points">4,720</div>
+                        <div class="badge">⭐ Master</div>
+                    </div>
+                    <div class="leaderboard-row">
+                        <div class="rank">🥉</div>
+                        <div class="name">Aditya Patel</div>
+                        <div class="points">4,590</div>
+                        <div class="badge">⭐ Master</div>
+                    </div>
+                    <div class="leaderboard-row">
+                        <div class="rank">4</div>
+                        <div class="name">Maya Gupta</div>
+                        <div class="points">4,320</div>
+                        <div class="badge">💎 Pro</div>
+                    </div>
+                    <div class="leaderboard-row">
+                        <div class="rank">5</div>
+                        <div class="name">Rohan Singh</div>
+                        <div class="points">4,150</div>
+                        <div class="badge">💎 Pro</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECT IDEA GENERATOR SECTION -->
+    <section id="idea-generator" class="idea-generator">
+        <div class="container">
+            <div class="section-header">
+                <h2>Stuck on Ideas?</h2>
+                <p>Get instant inspiration for your Skyfall project</p>
+            </div>
+            
+            <div class="idea-generator-card">
+                <div class="idea-display" id="idea-content">
+                    <p>Click the button to generate a project idea!</p>
+                </div>
+                <button class="btn-primary btn-lg" id="btn-generate-idea">✨ Generate Project Idea</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUEST APP SECTION -->
+    <section id="quest-section" class="quest-section">
+        <div class="container">
+            <div class="quest-hero">
+                <div class="quest-content">
+                    <h2>Day-of Adventure</h2>
+                    <p>Experience the interactive quest app on the day of Skyfall!</p>
+                    <div class="quest-features">
+                        <div class="quest-feature">
+                            <span class="quest-icon">📍</span>
+                            <div>
+                                <h4>Visit Venues</h4>
+                                <p>Explore hidden locations</p>
+                            </div>
+                        </div>
+                        <div class="quest-feature">
+                            <span class="quest-icon">📷</span>
+                            <div>
+                                <h4>Scan QR Codes</h4>
+                                <p>Unlock challenges</p>
+                            </div>
+                        </div>
+                        <div class="quest-feature">
+                            <span class="quest-icon">🏆</span>
+                            <div>
+                                <h4>Earn XP</h4>
+                                <p>Compete on leaderboard</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="/index.html" class="btn-primary btn-lg quest-btn">⭐ Launch Quest App</a>
+                </div>
+                <div class="quest-visual">
+                    <div class="quest-badge">🎮</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section id="faq" class="faq">
+        <div class="container">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <div class="faq-header">
+                        <h3>What is Skyfall?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-body">
+                        <p>Skyfall is a 48-hour hackathon where 1000+ teen students from across India come together to build innovative projects, learn new skills, and connect with industry leaders.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-header">
+                        <h3>Who can participate?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-body">
+                        <p>Students aged 13-19 from anywhere in India are eligible to apply. All skill levels welcome!</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-header">
+                        <h3>Is there a cost?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-body">
+                        <p>No! It's completely free. We cover food, accommodation, and all resources you need.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-header">
+                        <h3>Never hacked before?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-body">
+                        <p>Perfect! We have mentors and workshops for all skill levels. Everyone belongs here.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWSLETTER SECTION -->
+    <section id="newsletter" class="newsletter">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Stay Updated</h2>
+                <p>Be the first to know about Skyfall 2025</p>
+                
+                <form class="newsletter-form" id="newsletter-form">
+                    <input type="email" placeholder="your@email.com" required />
+                    <button type="submit" class="btn-primary">Notify Me</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Skyfall</h4>
+                    <p>India's largest teen hackathon for young innovators.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#showcase">Showcase</a></li>
+                        <li><a href="#leaderboard">Leaders</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <ul>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">LinkedIn</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>hello@skyfall.in</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Skyfall. Made with 💙</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="landing.js"></script>
+
+    <!-- AUTH MODAL -->
+    <div class="auth-modal" id="auth-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">&times;</button>
+            
+            <div class="modal-header">
+                <h2>Join Skyfall</h2>
+                <p>Create your account to apply for India's largest teen hackathon</p>
+            </div>
+
+            <form class="auth-form" id="register-form">
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" placeholder="your@email.com" required />
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" placeholder="••••••••" required />
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm">Confirm Password</label>
+                    <input type="password" id="register-confirm" placeholder="••••••••" required />
+                </div>
+                <div class="form-message" id="register-message"></div>
+                <button type="submit" class="btn-primary btn-full">Create Account</button>
+            </form>
+
+            <form class="auth-form hidden" id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" placeholder="your@email.com" required />
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required />
+                </div>
+                <div class="form-message" id="login-message"></div>
+                <button type="submit" class="btn-primary btn-full">Sign In</button>
+            </form>
+
+            <div class="auth-toggle">
+                <span id="toggle-text">Don't have an account?</span>
+                <button type="button" id="toggle-btn" class="link-btn">Sign Up</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="auth-overlay" id="auth-overlay"></div>
+</body>
+
+</html>

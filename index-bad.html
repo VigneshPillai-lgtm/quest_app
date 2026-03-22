@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skyfall — Quest App </title>
+    <meta name="description" content="Skyfall campus explorer: visit venues, scan QR codes, and complete missions!" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- PWA Requirements -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#38bdf8">
+    <link rel="apple-touch-icon" href="favicon.ico">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300..900;1,300..900&family=Pacifico&family=Yellowtail&display=swap"
+        rel="stylesheet" />
+    <!-- QR Code generator (for admin printable QRs) -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <!-- jsQR (for camera QR scanning) -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <link rel="stylesheet" href="style.css?v=5" />
+</head>
+
+<body>
+
+    <!-- SKY BACKGROUND WITH DETAILED SVG ASSETS -->
+    <div class="sky-bg">
+        <svg class="sky-assets" viewBox="0 0 1200 600" preserveAspectRatio="xMaxYMin slice">
+            <defs>
+                <!-- Sun Gradient - Multi-layered -->
+                <radialGradient id="sunGrad" cx="35%" cy="35%">
+                    <stop offset="0%" style="stop-color:#fffef5;stop-opacity:1" />
+                    <stop offset="15%" style="stop-color:#fff9e6;stop-opacity:1" />
+                    <stop offset="35%" style="stop-color:#ffd700;stop-opacity:1" />
+                    <stop offset="60%" style="stop-color:#ffb700;stop-opacity:0.9" />
+                    <stop offset="100%" style="stop-color:#ff9500;stop-opacity:0" />
+                </radialGradient>
+                
+                <!-- Cloud Gradient -->
+                <linearGradient id="cloudGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.95" />
+                    <stop offset="100%" style="stop-color:#f0f8ff;stop-opacity:0.85" />
+                </linearGradient>
+                
+                <!-- Bird Gradient -->
+                <linearGradient id="birdGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#87ceeb;stop-opacity:0.95" />
+                    <stop offset="100%" style="stop-color:#4db8ff;stop-opacity:0.8" />
+                </linearGradient>
+                
+                <linearGradient id="birdGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#1e88e5;stop-opacity:0.9" />
+                    <stop offset="100%" style="stop-color:#42a5f5;stop-opacity:0.75" />
+                </linearGradient>
+                
+                <!-- Shadow filter -->
+                <filter id="cloudShadow">
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="2" />
+                    <feDropShadow dx="0" dy="3" stdDeviation="2" flood-opacity="0.1" />
+                </filter>
+            </defs>
+            
+            <!-- DETAILED ANIMATED SUN -->
+            <g id="sun-group" class="animated-sun">
+                <!-- Outer glow layers for depth -->
+                <circle cx="950" cy="80" r="100" fill="url(#sunGrad)" opacity="0.3" class="sun-outer-glow" />
+                <circle cx="950" cy="80" r="90" fill="url(#sunGrad)" opacity="0.5" class="sun-mid-glow" />
+                <circle cx="950" cy="80" r="75" fill="url(#sunGrad)" opacity="0.7" class="sun-inner-glow" />
+                <!-- Main Sun -->
+                <circle cx="950" cy="80" r="70" fill="url(#sunGrad)" class="sun-main" />
+                
+                <!-- Sun Surface Details - Spots and texture -->
+                <g class="sun-texture" opacity="0.15">
+                    <circle cx="935" cy="70" r="8" fill="#ffb700" />
+                    <circle cx="960" cy="95" r="6" fill="#ffb700" />
+                    <circle cx="950" cy="50" r="5" fill="#ffb700" />
+                </g>
+                
+                <!-- Sun Ray Details -->
+                <g class="sun-rays" opacity="0.4">
+                    <line x1="950" y1="10" x2="950" y2="0" stroke="#ffb700" stroke-width="2.5" stroke-linecap="round" />
+                    <line x1="950" y1="150" x2="950" y2="160" stroke="#ffb700" stroke-width="2.5" stroke-linecap="round" />
+                    <line x1="880" y1="80" x2="870" y2="80" stroke="#ffb700" stroke-width="2.5" stroke-linecap="round" />
+                    <line x1="1020" y1="80" x2="1030" y2="80" stroke="#ffb700" stroke-width="2.5" stroke-linecap="round" />
+                    <line x1="900" y1="20" x2="892" y2="12" stroke="#ffb700" stroke-width="2" stroke-linecap="round" />
+                    <line x1="1000" y1="140" x2="1008" y2="148" stroke="#ffb700" stroke-width="2" stroke-linecap="round" />
+                </g>
+                
+                <!-- Sun Shine/Highlight -->
+                <ellipse cx="925" cy="55" rx="30" ry="25" fill="white" opacity="0.5" class="sun-shine" />
+                <ellipse cx="928" cy="58" rx="18" ry="14" fill="white" opacity="0.3" />
+            </g>
+            
+            <!-- DETAILED FLYING BIRDS - Multiple with complex geometry -->
+            <g class="birds-group">
+                <!-- Bird 1 - Main bird, higher detail -->
+                <g class="bird bird-1" transform="translate(120, 130)">
+                    <g class="bird-shadow" opacity="0.1">
+                        <ellipse cx="0" cy="8" rx="16" ry="4" fill="#000" />
+                    </g>
+                    <g class="bird-body">
+                        <!-- Body -->
+                        <ellipse cx="0" cy="0" rx="13" ry="9" fill="url(#birdGrad1)" />
+                        <!-- Head -->
+                        <circle cx="11" cy="-2.5" r="7" fill="url(#birdGrad1)" />
+                        <!-- Eye with pupil -->
+                        <circle cx="15" cy="-2.5" r="2" fill="#fff" opacity="0.8" />
+                        <circle cx="15.5" cy="-2.5" r="1" fill="#000" />
+                        <!-- Beak - detailed -->
+                        <polygon points="19,-2.5 26,-1 19,0.5" fill="#ff9500" />
+                        <polygon points="19,-2 25,-1 19,0" fill="#ffb347" opacity="0.6" />
+                        <!-- Tail feathers - detailed curve -->
+                        <path d="M -13 1 Q -22 -1 -28 -4" stroke="#4db8ff" stroke-width="2.5" fill="none" stroke-linecap="round" />
+                        <path d="M -13 -1 Q -21 -4 -26 -7" stroke="#1e88e5" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.7" />
+                    </g>
+                    <!-- Wings - animated flapping -->
+                    <g class="bird-wing bird-wing-top">
+                        <ellipse cx="0" cy="-5" rx="20" ry="7" fill="#1e88e5" opacity="0.75" />
+                        <path d="M -8 -6 Q 0 -10 8 -6\" stroke="#42a5f5\" stroke-width=\"1\" fill=\"none\" opacity=\"0.4\" />\n                    </g>\n                    <g class=\"bird-wing bird-wing-bottom\">\n                        <ellipse cx=\"0\" cy=\"4\" rx=\"19\" ry=\"6\" fill=\"#42a5f5\" opacity=\"0.6\" />\n                    </g>\n                </g>\n                \n                <!-- Bird 2 - Smaller, different angle -->\n                <g class=\"bird bird-2\" transform=\"translate(280, 100)\">\n                    <g class=\"bird-shadow\" opacity=\"0.08\">\n                        <ellipse cx=\"0\" cy=\"6\" rx=\"15\" ry=\"3.5\" fill=\"#000\" />\n                    </g>\n                    <g class=\"bird-body\">\n                        <ellipse cx=\"0\" cy=\"0\" rx=\"12\" ry=\"8\" fill=\"#87ceeb\" />\n                        <circle cx=\"10\" cy=\"-1.5\" r=\"6.5\" fill=\"#87ceeb\" />\n                        <circle cx=\"14\" cy=\"-1\" r=\"2\" fill=\"#fff\" opacity=\"0.7\" />\n                        <circle cx=\"14.5\" cy=\"-1\" r=\"0.8\" fill=\"#000\" />\n                        <polygon points=\"18,-1 24,0.5 18,2\" fill=\"#ff7f50\" />\n                        <polygon points=\"18,-0.5 23,0.2 18,1.5\" fill=\"#ffb347\" opacity=\"0.5\" />\n                        <path d=\"M -12 1.5 Q -20 -0.5 -25 -3\" stroke=\"#64b5f6\" stroke-width=\"2\" fill=\"none\" stroke-linecap=\"round\" />\n                    </g>\n                    <g class=\"bird-wing\">\n                        <ellipse cx=\"0\" cy=\"-4\" rx=\"18\" ry=\"6.5\" fill=\"#42a5f5\" opacity=\"0.75\" />\n                        <path d=\"M -7 -5 Q 0 -8 7 -5\" stroke=\"#1e88e5\" stroke-width=\"0.5\" fill=\"none\" opacity=\"0.3\" />\n                    </g>\n                </g>\n                \n                <!-- Bird 3 - Distant bird (smaller) -->\n                <g class=\"bird bird-3\" transform=\"translate(420, 155)\">\n                    <g class=\"bird-shadow\" opacity=\"0.06\">\n                        <ellipse cx=\"0\" cy=\"5\" rx=\"12\" ry=\"3\" fill=\"#000\" />\n                    </g>\n                    <g class=\"bird-body\">\n                        <ellipse cx=\"0\" cy=\"0\" rx=\"10\" ry=\"6.5\" fill=\"#64b5f6\" />\n                        <circle cx=\"8\" cy=\"1\" r=\"5\" fill=\"#64b5f6\" />\n                        <circle cx=\"11\" cy=\"1\" r=\"1.5\" fill=\"#fff\" opacity=\"0.6\" />\n                        <circle cx=\"11.5\" cy=\"1\" r=\"0.6\" fill=\"#000\" />\n                        <polygon points=\"14,1 19,2 14,3\" fill=\"#ffa500\" />\n                        <path d=\"M -10.5 2 Q -17 4.5 -21 6.5\" stroke=\"#42a5f5\" stroke-width=\"1.5\" fill=\"none\" stroke-linecap=\"round\" />\n                    </g>\n                    <g class=\"bird-wing\">\n                        <ellipse cx=\"0\" cy=\"-3\" rx=\"16\" ry=\"5\" fill=\"#1e88e5\" opacity=\"0.65\" />\n                    </g>\n                </g>\n                \n                <!-- Bird 4 - Subtle background bird -->\n                <g class=\"bird bird-4\" transform=\"translate(550, 75)\" opacity=\"0.4\">\n                    <g class=\"bird-body\">\n                        <ellipse cx=\"0\" cy=\"0\" rx=\"9\" ry=\"5.5\" fill=\"#a7d8ff\" />\n                        <circle cx=\"7\" cy=\"-0.5\" r=\"4.5\" fill=\"#a7d8ff\" />\n                        <circle cx=\"10\" cy=\"0\" r=\"1\" fill=\"#000\" opacity=\"0.5\" />\n                        <polygon points=\"12,0 16,1 12,1.5\" fill=\"#ffb347\" opacity=\"0.7\" />\n                        <path d=\"M -9 1 Q -15 2 -19 3.5\" stroke=\"#87ceeb\" stroke-width=\"1\" fill=\"none\" stroke-linecap=\"round\" />\n                    </g>\n                    <g class=\"bird-wing\">\n                        <ellipse cx=\"0\" cy=\"-2\" rx=\"14\" ry=\"4\" fill=\"#64b5f6\" opacity=\"0.55\" />\n                    </g>\n                </g>\n            </g>\n            
+            <!-- DETAILED LAYERED CLOUDS -->
+            <g class=\"clouds-group\">
+                <!-- Cloud 1 - Large Fluffy -->
+                <g class=\"cloud-group cloud-1-svg\" transform=\"translate(80, 160)\" filter=\"url(#cloudShadow)\">\n                    <!-- Main body layers -->\n                    <ellipse cx=\"0\" cy=\"0\" rx=\"70\" ry=\"38\" fill=\"url(#cloudGrad)\" />\n                    <!-- Left bumps -->\n                    <ellipse cx=\"-45\" cy=\"-6\" rx=\"52\" ry=\"42\" fill=\"url(#cloudGrad)\" />\n                    <ellipse cx=\"-55\" cy=\"8\" rx=\"38\" ry=\"28\" fill=\"url(#cloudGrad)\" />\n                    <!-- Right bumps -->\n                    <ellipse cx=\"45\" cy=\"-8\" rx=\"58\" ry=\"40\" fill=\"url(#cloudGrad)\" />\n                    <ellipse cx=\"65\" cy=\"10\" rx=\"40\" ry=\"30\" fill=\"url(#cloudGrad)\" />\n                    <!-- Top curls -->\n                    <ellipse cx=\"-20\" cy=\"-18\" rx=\"35\" ry=\"25\" fill=\"url(#cloudGrad)\" opacity=\"0.9\" />\n                    <ellipse cx=\"20\" cy=\"-20\" rx=\"38\" ry=\"26\" fill=\"url(#cloudGrad)\" opacity=\"0.9\" />\n                    <!-- Inner light details -->\n                    <path d=\"M -30 -12 Q -10 -18 10 -14\" stroke=\"rgba(255,255,255,0.7)\" stroke-width=\"1.5\" fill=\"none\" opacity=\"0.6\" />\n                    <path d=\"M -40 2 Q 0 -2 40 2\" stroke=\"rgba(255,255,255,0.5)\" stroke-width=\"1\" fill=\"none\" opacity=\"0.4\" />\n                </g>\n                
+                <!-- Cloud 2 - Medium fluffy -->\n                <g class=\"cloud-group cloud-2-svg\" transform=\"translate(320, 110)\" opacity=\"0.8\" filter=\"url(#cloudShadow)\">\n                    <ellipse cx=\"0\" cy=\"0\" rx=\"60\" ry=\"32\" fill=\"url(#cloudGrad)\" />\n                    <ellipse cx=\"-38\" cy=\"-5\" rx=\"48\" ry=\"36\" fill=\"url(#cloudGrad)\" />\n                    <ellipse cx=\"38\" cy=\"-7\" rx=\"50\" ry=\"34\" fill=\"url(#cloudGrad)\" />\n                    <ellipse cx=\"-52\" cy=\"8\" rx=\"32\" ry=\"24\" fill=\"url(#cloudGrad)\" />\n                    <ellipse cx=\"52\" cy=\"10\" rx=\"35\" ry=\"26\" fill=\"url(#cloudGrad)\" />\n                    <ellipse cx=\"-15\" cy=\"-16\" rx=\"30\" ry=\"22\" fill=\"url(#cloudGrad)\" opacity=\"0.85\" />\n                    <ellipse cx=\"15\" cy=\"-18\" rx=\"32\" ry=\"23\" fill=\"url(#cloudGrad)\" opacity=\"0.85\" />\n                    <path d=\"M -25 -10 Q 0 -14 25 -10\" stroke=\"rgba(255,255,255,0.6)\" stroke-width=\"1\" fill=\"none\" opacity=\"0.5\" />\n                </g>\n                
+                <!-- Cloud 3 - Wispy medium -->\n                <g class=\"cloud-group cloud-3-svg\" transform=\"translate(580, 200)\" opacity=\"0.7\" filter=\"url(#cloudShadow)\">\n                    <ellipse cx=\"0\" cy=\"0\" rx=\"55\" ry=\"30\" fill=\"url(#cloudGrad)\" />\n                    <ellipse cx=\"-32\" cy=\"-3\" rx=\"45\" ry=\"34\" fill=\"url(#cloudGrad)\" />\n                    <ellipse cx=\"32\" cy=\"-5\" rx=\"48\" ry=\"32\" fill=\"url(#cloudGrad)\" />\n                    <ellipse cx=\"-48\" cy=\"7\" rx=\"30\" ry=\"22\" fill=\"url(#cloudGrad)\" />\n                    <ellipse cx=\"-12\" cy=\"-14\" rx=\"28\" ry=\"20\" fill=\"url(#cloudGrad)\" opacity=\"0.8\" />\n                    <ellipse cx=\"12\" cy=\"-16\" rx=\"30\" ry=\"21\" fill=\"url(#cloudGrad)\" opacity=\"0.8\" />\n                    <path d=\"M -18 -8 Q 5 -12 22 -8\" stroke=\"rgba(255,255,255,0.5)\" stroke-width=\"0.8\" fill=\"none\" opacity=\"0.4\" />\n                </g>\n                \n                <!-- Cloud 4 - Large distant cloud -->\n                <g class=\"cloud-group cloud-4-svg\" transform=\"translate(800, 140)\" opacity=\"0.65\" filter=\"url(#cloudShadow)\">\n                    <ellipse cx=\"0\" cy=\"0\" rx=\"65\" ry=\"35\" fill=\"url(#cloudGrad)\" />\n                    <ellipse cx=\"-40\" cy=\"-6\" rx=\"52\" ry=\"38\" fill=\"url(#cloudGrad)\" />\n                    <ellipse cx=\"40\" cy=\"-8\" rx=\"55\" ry=\"36\" fill=\"url(#cloudGrad)\" />\n                    <ellipse cx=\"-58\" cy=\"8\" rx=\"35\" ry=\"26\" fill=\"url(#cloudGrad)\" />\n                    <ellipse cx=\"58\" cy=\"10\" rx=\"38\" ry=\"28\" fill=\"url(#cloudGrad)\" />\n                    <ellipse cx=\"-18\" cy=\"-18\" rx=\"32\" ry=\"24\" fill=\"url(#cloudGrad)\" opacity=\"0.8\" />\n                    <ellipse cx=\"18\" cy=\"-20\" rx=\"34\" ry=\"25\" fill=\"url(#cloudGrad)\" opacity=\"0.8\" />\n                    <path d=\"M -28 -12 Q -5 -16 20 -12\" stroke=\"rgba(255,255,255,0.5)\" stroke-width=\"1\" fill=\"none\" opacity=\"0.4\" />\n                </g>\n            </g>\n        </svg>\n        \n        <div class=\"horizon-glow\"></div>\n        <div class=\"stars\" id=\"stars\"></div>\n    </div>\n\n    <!-- =========== MAIN APP SHELL =========== -->\n    <div class=\"app-shell\" id=\"app-shell\">\n\n        <!-- TOP HUD -->\n        <header class=\"hud-top\">\n            <div class=\"hud-player\">\n                <div class=\"avatar-ring\">\n                    <div class=\"avatar\" id=\"hud-avatar\">🧑</div>\n                </div>\n                <div class=\"hud-info\">\n                    <span class=\"hud-name\" id=\"hud-name\">Explorer</span>\n                    <div class=\"xp-bar-wrap\">\n                        <div class=\"xp-bar\" id=\"xp-bar\"></div>\n                    </div>\n                    <span class=\"xp-label\" id=\"xp-label\">0 XP</span>\n                </div>\n            </div>\n            <div class=\"hud-right\">\n                <div class=\"badge-count\" id=\"badge-count\">0/5</div>\n                <span class=\"badge-label\">Venues</span>\n                <button class=\"btn-icon\" id=\"btn-admin-open\" title=\"Admin\">⚙️</button>\n                <button class=\"btn-icon\" id=\"btn-logout\" title=\"Log Out\">🚪</button>\n            </div>\n        </header>\n\n        <!-- SCREEN: SCANNER (primary) -->\n        <div class=\"screen-inner\" id=\"screen-scan\">\n            <div class=\"scanner-main-wrap\">\n                <div class=\"scanner-title\">\n                    <span>📷</span>\n                    <h2>Scan Venue QR</h2>\n                </div>\n                <p class=\"scanner-main-hint\" id=\"scanner-main-hint\">Allow camera access and point it at a venue QR code!\n                </p>\n                <div class=\"scanner-main-video-wrap\">\n                    <video id=\"qr-video\" playsinline autoplay muted></video>\n                    <canvas id=\"qr-canvas\" style=\"display:none\"></canvas>\n                    <div class=\"scanner-frame\">\n                        <div class=\"corner tl\"></div>\n                        <div class=\"corner tr\"></div>\n                        <div class=\"corner bl\"></div>\n                        <div class=\"corner br\"></div>\n                        <div class=\"scan-line\"></div>\n                    </div>\n                </div>\n                <div class=\"scan-result hidden\" id=\"scan-result\">\n                    <span id=\"scan-result-text\"></span>\n                </div>\n                <button class=\"btn-primary btn-start-scan\" id=\"btn-start-scan\">📷 Allow Camera & Scan</button>\n            </div>\n        </div>\n\n        <!-- SCREEN: PROGRESS -->\n        <div class=\"screen-inner hidden\" id=\"screen-progress\">\n            <div class=\"progress-header\">\n                <h2>Your Progress</h2>\n                <div class=\"trophy-row\" id=\"trophy-row\"></div>\n            </div>\n            <div class=\"progress-grid\" id=\"progress-grid\"></div>\n            <div class=\"total-xp-card\">\n                <div class=\"total-xp-label\">Total XP Earned</div>\n                <div class=\"total-xp-value\" id=\"total-xp-display\">0</div>\n                <div class=\"xp-full-bar\">\n                    <div class=\"xp-full-fill\" id=\"xp-full-fill\"></div>\n                </div>\n            </div>\n        </div>\n\n        <!-- BOTTOM NAV -->\n        <nav class=\"bottom-nav\">\n            <button class=\"nav-btn active\" id=\"nav-scan-tab\" data-screen=\"scan\">\n                <span class=\"nav-icon\">📷</span>\n                <span class=\"nav-label\">Scan</span>\n            </button>\n            <button class=\"nav-btn\" id=\"nav-progress\" data-screen=\"progress\">\n                <span class=\"nav-icon\">📊</span>\n                <span class=\"nav-label\">Progress</span>\n            </button>\n        </nav>\n\n    </div>\n\n    <!-- =========== BLOCK DETAIL PANEL =========== -->\n    <div class=\"overlay hidden\" id=\"venue-overlay\"></div>\n    <div class=\"venue-panel hidden\" id=\"venue-panel\">\n        <div class=\"panel-drag-handle\"></div>\n        <div class=\"panel-header\">\n            <div class=\"panel-venue-icon\" id=\"panel-icon\">🏫</div>\n            <div>\n                <h2 class=\"panel-venue-name\" id=\"panel-name\">Block A</h2>\n                <span class=\"panel-status-badge\" id=\"panel-badge\">Locked</span>\n            </div>\n            <button class=\"btn-close\" id=\"btn-panel-close\">✕</button>\n        </div>\n        <div class=\"panel-body\">\n\n            <!-- LOCKED state: prompt to scan -->\n            <div id=\"state-locked\">\n                <div class=\"locked-hint\">\n                    <div class=\"lock-icon\">🔒</div>\n                    <p>Head to <strong id=\"locked-venue-name\">this venue</strong> on campus and scan its QR code to\n                        unlock your mission!</p>\n                </div>\n                <button class=\"btn-scan-qr\" id=\"btn-open-scanner\">📷 Scan QR Code</button>\n            </div>\n\n            <!-- UNLOCKED state: show task, prompt to complete -->\n            <div id=\"state-unlocked\" class=\"hidden\">\n                <div class=\"task-box\">\n                    <div class=\"task-box-label\">🎯 Mission</div>\n                    <div class=\"task-text\" id=\"panel-task\">—</div>\n                </div>\n                <div class=\"panel-stats\">\n                    <div class=\"stat-item\">\n                        <span class=\"stat-val\" id=\"panel-xp-reward\">+50 XP</span>\n                        <span class=\"stat-key\">Reward</span>\n                    </div>\n                    <div class=\"stat-item\">\n                        <span class=\"stat-val\" id=\"panel-unlock-time\">—</span>\n                        <span class=\"stat-key\">Unlocked At</span>\n                    </div>\n                </div>\n                <button class=\"btn-complete\" id=\"btn-complete\">✅ Mark Mission Complete</button>\n            </div>\n\n            <!-- COMPLETED state -->\n            <div id=\"state-completed\" class=\"hidden\">\n                <div class=\"task-box\">\n                    <div class=\"task-box-label\">🎯 Mission (Completed)</div>\n                    <div class=\"task-text\" id=\"panel-task-done\">—</div>\n                </div>\n                <div class=\"completed-banner\">\n                    🎉 Mission Accomplished! You earned XP for this venue.\n                </div>\n            </div>\n\n        </div>\n    </div>\n\n\n    <!-- =========== ADMIN PANEL =========== -->\n    <div class=\"overlay hidden\" id=\"admin-overlay\"></div>\n    <div class=\"admin-panel hidden\" id=\"admin-panel\">\n        <div class=\"admin-header\">\n            <span>⚙️ Admin Panel</span>\n            <button class=\"btn-close\" id=\"btn-admin-close\">✕</button>\n        </div>\n        <div class=\"admin-body\" id=\"admin-body\">\n\n            <!-- Login -->\n            <div class=\"admin-login\" id=\"admin-login\">\n                <p>Enter admin password to manage tasks &amp; QR codes</p>\n                <input type=\"password\" id=\"admin-pass\" placeholder=\"Password\" />\n                <button class=\"btn-primary\" id=\"btn-admin-login\">Login</button>\n                <span class=\"admin-error hidden\" id=\"admin-error\">Incorrect password</span>\n            </div>\n\n            <!-- Tasks + QR codes -->\n            <div class=\"admin-tasks hidden\" id=\"admin-tasks\">\n                <div class=\"admin-tabs\">\n                    <button class=\"admin-tab active\" id=\"tab-tasks-btn\">Tasks</button>\n                    <button class=\"admin-tab\" id=\"tab-qr-btn\">QR Codes</button>\n                    <button class=\"admin-tab\" id=\"tab-users-btn\">Users</button>\n                </div>\n\n                <!-- Tasks tab -->\n                <div id=\"tab-tasks\">\n                    <div class=\"admin-reset-row\">\n                        <button class=\"btn-danger\" id=\"btn-reset-all\">🔄 Reset All Progress</button>\n                    </div>\n                    <div id=\"admin-task-list\"></div>\n                    <button class=\"btn-primary\" id=\"btn-save-tasks\">💾 Save All Tasks</button>\n                </div>\n\n                <!-- QR tab -->\n                <div id=\"tab-qr\" class=\"hidden\">\n                    <p class=\"qr-tab-hint\">Print these QR codes and place them at each venue. Students scan them on-site\n                        to unlock their mission.</p>\n                    <div id=\"qr-codes-grid\"></div>\n                    <button class=\"btn-primary\" id=\"btn-print-qr\">🖨️ Print All QR Codes</button>\n                </div>\n\n                <!-- Users tab -->\n                <div id=\"tab-users\" class=\"hidden\">\n                    <div class=\"admin-users-header\">\n                        <h3>Player Logs</h3>\n                        <button class=\"btn-icon\" id=\"btn-refresh-users\" title=\"Refresh\">🔄</button>\n                    </div>\n                    <div id=\"admin-users-list\">\n                        <div class=\"admin-user-loading\">Loading players...</div>\n                    </div>\n                </div>\n            </div>\n\n        </div>\n    </div>\n\n    <!-- =========== TOAST =========== -->\n    <div class=\"xp-toast hidden\" id=\"xp-toast\">+50 XP</div>\n\n    <script>\n        if ('serviceWorker' in navigator) {\n            window.addEventListener('load', () => {\n                navigator.serviceWorker.register('sw.js').catch(err => {\n                    console.log('SW registration failed:', err);\n                });\n            });\n        }\n    </script>\n    <script src=\"app.js\"></script>\n</body>\n\n</html>\n

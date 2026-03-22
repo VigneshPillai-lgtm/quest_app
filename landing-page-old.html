@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skyfall — India's Largest Teen Hackathon</title>
+    <meta name="description" content="Skyfall: India's largest teen hackathon. Build, learn, and connect with innovators across India." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:ital,wght@0,300..900;1,300..900&family=Pacifico&family=Yellowtail&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="landing.css" />
+</head>
+
+<body>
+    <!-- ANIMATED BACKGROUND -->
+    <div class="animated-bg">
+        <div class="mountain mountain-1"></div>
+        <div class="mountain mountain-2"></div>
+        <div class="mountain mountain-3"></div>
+        <div class="stars" id="stars"></div>
+        <canvas id="particle-canvas"></canvas>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span style="font-family: 'Pacifico', cursive; font-size: 1.5rem; color: var(--primary);">Skyfall</span>
+            </div>
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#features">Features</a>
+                <a href="#idea-generator">Ideas</a>
+                <a href="#faq">FAQ</a>
+                <a href="#" class="btn-primary" id="nav-register">Join Now</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section id="hero" class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    India's Largest
+                    <span class="gradient-text">Teen Hackathon</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Join 1000+ teen innovators from across India for 48 hours of building, learning, and creating something amazing.
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn-primary btn-lg" id="btn-register">Apply Now</button>
+                    <button class="btn-secondary btn-lg">Learn More</button>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">1000+</span>
+                        <span class="stat-label">Teen Coders</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">50+</span>
+                        <span class="stat-label">Cities</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">48</span>
+                        <span class="stat-label">Hours</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <svg class="hero-bird bird-1" width="120" height="120" viewBox="0 0 120 120" fill="none">
+                    <path d="M60 20C75 30 85 50 80 70C75 90 55 95 40 85C30 78 25 60 35 45C45 30 50 20 60 20Z" fill="url(#grad1)" />
+                </svg>
+                <svg class="hero-bird bird-2" width="80" height="80" viewBox="0 0 80 80" fill="none">
+                    <path d="M40 15C50 22 58 35 55 50C52 65 40 70 28 62C20 56 16 42 25 32C32 22 35 15 40 15Z" fill="url(#grad2)" />
+                </svg>
+                <div class="glow-orb orb-1"></div>
+                <div class="glow-orb orb-2"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2>Built For Teen Innovators</h2>
+            <p class="section-subtitle">Whether you're 13 or 19, beginner or advanced, Skyfall welcomes all teen creators and builders.</p>
+            
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="card-icon">🚀</div>
+                    <h3>Build & Create</h3>
+                    <p>Create your dream project in just 48 hours with guidance from India's top tech mentors.</p>
+                </div>
+                <div class="about-card">
+                    <div class="card-icon">🤝</div>
+                    <h3>Connect & Network</h3>
+                    <p>Meet brilliant teen innovators from 50+ cities across India and build lifetime friendships.</p>
+                </div>
+                <div class="about-card">
+                    <div class="card-icon">📚</div>
+                    <h3>Learn & Grow</h3>
+                    <p>Attend 15+ workshops on AI, Web3, Mobile Dev, Cloud, and emerging technologies.</p>
+                </div>
+                <div class="about-card">
+                    <div class="card-icon">🎉</div>
+                    <h3>Have Fun</h3>
+                    <p>Gaming tournaments, prizes, amazing food, and unforgettable memories guaranteed!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2>What Makes Us Different</h2>
+            
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-number">01</div>
+                    <h3>All Expenses Covered</h3>
+                    <p>We cover food, accommodation, and travel for all attendees so you can focus on building.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-number">02</div>
+                    <h3>World-Class Mentors</h3>
+                    <p>Learn directly from engineers at top companies and experienced tech leaders.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-number">03</div>
+                    <h3>Amazing Community</h3>
+                    <p>Experience an inclusive environment where everyone feels welcome to dream big.</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-number">04</div>
+                    <h3>Incredible Speakers</h3>
+                    <p>Get inspired by keynotes from founders, CTOs, and industry innovators.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECTS SHOWCASE -->
+    <section id="projects" class="projects">
+        <div class="container">
+            <h2>Amazing Projects Built Here</h2>
+            <p class="section-subtitle">Check out some incredible projects from previous events.</p>
+            
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                    <h3>AI Code Assistant</h3>
+                    <p>Autonomous AI agents that help developers write better code with real-time suggestions.</p>
+                    <a href="#" class="project-link">View on DevPost →</a>
+                </div>
+                <div class="project-card">
+                    <div class="project-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                    <h3>Health Tracker</h3>
+                    <p>Real-time health monitoring app that syncs with wearables and provides AI insights.</p>
+                    <a href="#" class="project-link">View on DevPost →</a>
+                </div>
+                <div class="project-card">
+                    <div class="project-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                    <h3>Web3 Community Platform</h3>
+                    <p>Decentralized social network built on blockchain with NFT integration.</p>
+                    <a href="#" class="project-link">View on DevPost →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS SECTION -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-big">1200+</div>
+                    <div class="stat-text">Hackers from around the world</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-big">178</div>
+                    <div class="stat-text">Schools represented</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-big">235</div>
+                    <div class="stat-text">Projects submitted</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-big">180+</div>
+                    <div class="stat-text">Industry mentors</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section id="faq" class="faq">
+        <div class="container">
+            <h2>Frequently Asked Questions</h2>
+            
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-header">
+                        <h3>What is Skyfall?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-body">
+                        <p>Skyfall is a 48-hour hackathon where 1000+ teen students from across India come together to build innovative projects, learn new skills, and connect with industry leaders.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-header">
+                        <h3>Who can participate?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-body">
+                        <p>Students of any education level from anywhere in the world are eligible to apply. All attendees must be 13 years or older.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-header">
+                        <h3>Is there a cost to attend?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-body">
+                        <p>No! Admission is completely free. We cover food, accommodation, and all resources you need to build an amazing project.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-header">
+                        <h3>What if I've never hacked before?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-body">
+                        <p>Perfect! Skyfall welcomes teen hackers of all skill levels. We provide workshops, mentorship, and resources to help you succeed.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-header">
+                        <h3>When and where is Skyfall?</h3>
+                        <span class="faq-icon">+</span>
+                    </div>
+                    <div class="faq-body">
+                        <p>Skyfall takes place in September at a central location in India. Applications open in June. Follow our updates for exact dates and location!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECT IDEA GENERATOR SECTION -->
+    <section id="idea-generator" class="idea-generator">
+        <div class="container">
+            <div class="idea-header">
+                <h2>Stuck on Ideas?</h2>
+                <p class="section-subtitle">Generate random project ideas to spark your creativity at Skyfall!</p>
+            </div>
+            
+            <div class="idea-generator-card">
+                <div class="idea-display">
+                    <div class="idea-content" id="idea-content">
+                        <p style="font-size: 1.1rem; color: var(--text-secondary);">Click the button to generate a project idea!</p>
+                    </div>
+                </div>
+                <button class="btn-primary btn-lg" id="btn-generate-idea">✨ Generate Project Idea</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUEST APP SECTION -->
+    <section id="quest-section" class="quest-section">
+        <div class="container">
+            <div class="quest-hero">
+                <div class="quest-content">
+                    <h2>Day-of Adventure Awaits</h2>
+                    <p>When you arrive at Skyfall, explore venues, scan QR codes, complete missions, and earn XP!</p>
+                    <div class="quest-features">
+                        <div class="quest-feature">
+                            <span class="quest-icon">📍</span>
+                            <div>
+                                <h4>Visit Venues</h4>
+                                <p>Explore hidden locations across the venue</p>
+                            </div>
+                        </div>
+                        <div class="quest-feature">
+                            <span class="quest-icon">📷</span>
+                            <div>
+                                <h4>Scan QR Codes</h4>
+                                <p>Unlock challenges at each location</p>
+                            </div>
+                        </div>
+                        <div class="quest-feature">
+                            <span class="quest-icon">🏆</span>
+                            <div>
+                                <h4>Earn XP & Badges</h4>
+                                <p>Compete for top spot on the leaderboard</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="/index.html" class="btn-primary btn-lg quest-btn">⭐ Launch Quest App</a>
+                </div>
+                <div class="quest-visual">
+                    <div class="quest-badge">🎮</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- NEWSLETTER SECTION -->
+    <section id="newsletter" class="newsletter">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Stay Updated</h2>
+                <p>Be the first to know about Skyfall 2025 and get early access to applications.</p>
+                
+                <form class="newsletter-form" id="newsletter-form">
+                    <input type="email" placeholder="your@email.com" required />
+                    <button type="submit" class="btn-primary">Notify Me</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Skyfall</h4>
+                    <p>India's largest teen hackathon for young innovators.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Links</h4>
+                    <ul>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <ul>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">LinkedIn</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>hello@thesummit.com</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Skyfall. Made with 💙</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="landing.js"></script>
+
+    <!-- AUTH MODAL -->
+    <div class="auth-modal" id="auth-modal">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close">&times;</button>
+            
+            <div class="modal-header">
+                <h2>Join Skyfall</h2>
+                <p>Create your account to apply for India's largest teen hackathon</p>
+            </div>
+
+            <!-- Register Form -->
+            <form class="auth-form" id="register-form">
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" placeholder="your@email.com" required />
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" placeholder="••••••••" required />
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm">Confirm Password</label>
+                    <input type="password" id="register-confirm" placeholder="••••••••" required />
+                </div>
+                <div class="form-message" id="register-message"></div>
+                <button type="submit" class="btn-primary btn-full">Create Account</button>
+            </form>
+
+            <!-- Login Form (Hidden by default) -->
+            <form class="auth-form hidden" id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" placeholder="your@email.com" required />
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required />
+                </div>
+                <div class="form-message" id="login-message"></div>
+                <button type="submit" class="btn-primary btn-full">Sign In</button>
+            </form>
+
+            <!-- Toggle between Register and Login -->
+            <div class="auth-toggle">
+                <p id="toggle-text">Already have an account? <button type="button" id="toggle-btn" class="link-btn">Sign In</button></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTH OVERLAY -->
+    <div class="auth-overlay" id="auth-overlay"></div>
+</body>
+
+</html>
